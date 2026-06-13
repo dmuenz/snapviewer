@@ -1,0 +1,55 @@
+// App entry point that initializes all UI modules and starts boot flow.
+
+'use strict';
+
+import { state } from './state.js';
+import { dbGetAll } from './db.js';
+import { initPathDropdownEvents, openSnaps, activateRecord } from './core.js';
+import { renderDropdown } from './dropdown.js';
+import { showSplash, showReturnSplash, showReadySplash } from './splash.js';
+import { initControls } from './controls.js';
+import { initResizer } from './resizer.js';
+import { initZoom } from './zoom.js';
+import { initTooltipTracking } from './tooltip.js';
+
+// Shared dropdown action callbacks used everywhere dropdown is rendered.
+const dropdownActions = {
+  onOpenSnaps: () => openSnaps(withRenderDropdown, showReadySplash),
+  onActivateRecord: (rec) => activateRecord(rec, withRenderDropdown, showReadySplash),
+  onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown)
+};
+
+// Small wrapper to keep call sites concise.
+function withRenderDropdown(records, activeId) {
+  renderDropdown(records, activeId, dropdownActions);
+}
+
+// Path dropdown open handler (reload records each open).
+initPathDropdownEvents(async () => {
+  const records = await dbGetAll();
+  withRenderDropdown(records, state.currentRecId);
+});
+
+// Initialize non-core UI handlers.
+initControls();
+initResizer();
+initZoom();
+initTooltipTracking();
+
+// Boot flow.
+(async function boot() {
+  const records = await dbGetAll();
+  if (records.length === 0) {
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);
+    return;
+  }
+
+  const mostRecent = records[0];
+  showReturnSplash(
+    mostRecent,
+    records,
+    () => dropdownActions.onActivateRecord(mostRecent),
+    dropdownActions.onOpenSnaps,
+    withRenderDropdown
+  );
+})();
