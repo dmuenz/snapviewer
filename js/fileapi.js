@@ -164,35 +164,40 @@ function createHandleForPath(basePath, fileMap, dirSet, allFiles) {
     }
   }
 
+  // Generator function for async iteration
+  async function* valuesGenerator() {
+    for (const entry of entries.values()) {
+      if (entry.kind === 'file') {
+        yield {
+          name: entry.name,
+          kind: 'file',
+          getFile: async () => entry.file,
+          getDirectoryHandle: null
+        };
+      } else {
+        yield {
+          name: entry.name,
+          kind: 'directory',
+          getFile: null,
+          getDirectoryHandle: async () => createHandleForPath(entry.path, fileMap, dirSet, allFiles)
+        };
+      }
+    }
+  }
+
   // Create handle object
   const handle = {
     name: basePath ? basePath.split('/').pop() : 'root',
     path: basePath,
 
-    // Async iterable: yield child entries
-    async *values() {
-      for (const entry of entries.values()) {
-        if (entry.kind === 'file') {
-          yield {
-            name: entry.name,
-            kind: 'file',
-            getFile: async () => entry.file,
-            getDirectoryHandle: null
-          };
-        } else {
-          yield {
-            name: entry.name,
-            kind: 'directory',
-            getFile: null,
-            getDirectoryHandle: async () => createHandleForPath(entry.path, fileMap, dirSet, allFiles)
-          };
-        }
-      }
+    // values() method for for-await-of compatibility
+    values() {
+      return valuesGenerator();
     },
 
-    // Support [Symbol.asyncIterator] for for-await-of
+    // Support [Symbol.asyncIterator] for for-await-of (alternative)
     [Symbol.asyncIterator]() {
-      return this.values();
+      return valuesGenerator();
     },
 
     // Get a subdirectory by name
