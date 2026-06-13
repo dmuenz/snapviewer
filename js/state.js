@@ -14,5 +14,6 @@ export const state = {
   currentZoom: 'zoom-fit-width',
   currentMedia: null,
   treeGeneration: 0,
-  openPaths: new Set()
+  openPaths: new Set(),
+  isTemporarySession: false // Track if current session is webkitdirectory (temporary)
 };
