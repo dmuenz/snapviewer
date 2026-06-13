@@ -5,6 +5,7 @@ import { dom, $ } from './dom.js';
 import { dbGetAll, dbPut, dbSetMeta, upsertHandle } from './db.js';
 import { escHtml, displayName } from './helpers.js';
 import { rebuildTree } from './tree.js';
+import { pickDirectory, BROWSER_CAPABILITIES } from './fileapi.js';
 
 // Render a safe error message into the content panel.
 export function showError(msg) {
@@ -47,6 +48,15 @@ export async function loadRoot(handle, rec, renderDropdown, showReadySplash) {
   dom.pathText.textContent = displayName(rec);
   dom.pathText.classList.add('has-path');
 
+  // If session-only (webkitdirectory), add visual indicator
+  if (rec.isTemporary) {
+    dom.pathText.title = 'Session-only (Firefox/Safari). This folder will not be remembered after page reload.';
+    dom.pathText.style.opacity = '0.7';
+  } else {
+    dom.pathText.title = '';
+    dom.pathText.style.opacity = '1';
+  }
+
   const records = await dbGetAll();
   renderDropdown(records, state.currentRecId);
 
@@ -57,10 +67,13 @@ export async function loadRoot(handle, rec, renderDropdown, showReadySplash) {
 // Request permission for a stored handle and activate it.
 export async function activateRecord(rec, renderDropdown, showReadySplash) {
   try {
-    const perm = await rec.handle.requestPermission({ mode: 'read' });
-    if (perm !== 'granted') {
-      showError('Permission denied. Please try again.');
-      return;
+    // Skip permission request for temporary (session-only) records
+    if (!rec.isTemporary) {
+      const perm = await rec.handle.requestPermission({ mode: 'read' });
+      if (perm !== 'granted') {
+        showError('Permission denied. Please try again.');
+        return;
+      }
     }
   } catch {
     showError('This folder is no longer accessible. Please open it again via "Open a different _snaps folder".');
@@ -75,23 +88,39 @@ export async function activateRecord(rec, renderDropdown, showReadySplash) {
   await loadRoot(rec.handle, rec, renderDropdown, showReadySplash);
 }
 
-// Open directory picker, resolve `_snaps`, persist handle, and load.
+// Open directory picker (native or fallback), resolve `_snaps`, persist handle, and load.
 export async function openSnaps(renderDropdown, showReadySplash) {
   try {
-    const records = await dbGetAll();
-    const startIn = records.length > 0 ? records[0].handle : 'documents';
-    const parent  = await window.showDirectoryPicker({ mode: 'read', startIn });
+    const result = await pickDirectory();
 
-    let handle;
-    try { handle = await parent.getDirectoryHandle(SNAPS_DIR); }
-    catch { handle = parent.name === SNAPS_DIR ? parent : null; }
-
-    if (!handle) {
-      showError(`"${SNAPS_DIR}" not found inside "${escHtml(parent.name)}". Please pick a folder that contains _snaps.`);
+    if (!result.root) {
+      if (result.errorMsg) {
+        showError(result.errorMsg);
+      }
       return;
     }
 
-    const { id, isNew } = await upsertHandle(handle);
+    const { root, isTemporary } = result;
+
+    // For temporary sessions, create an in-memory record without persistence
+    if (isTemporary) {
+      const inMemoryHandle = root;
+      const rec = {
+        id: Date.now(), // Temporary ID
+        handle: inMemoryHandle,
+        label: await promptNickname(''),
+        lastOpened: Date.now(),
+        isTemporary: true
+      };
+
+      // Don't save to DB; just load it
+      state.currentRecId = rec.id;
+      await loadRoot(inMemoryHandle, rec, renderDropdown, showReadySplash);
+      return;
+    }
+
+    // For persistent sessions, use existing flow
+    const { id, isNew } = await upsertHandle(root);
     const allRecs = await dbGetAll();
     const rec = allRecs.find(r => r.id === id);
 
@@ -104,7 +133,7 @@ export async function openSnaps(renderDropdown, showReadySplash) {
     await dbSetMeta('currentId', id);
     state.currentRecId = id;
 
-    await loadRoot(handle, rec, renderDropdown, showReadySplash);
+    await loadRoot(root, rec, renderDropdown, showReadySplash);
   } catch (e) {
     if (e.name !== 'AbortError') showError('Error: ' + e.message);
   }
