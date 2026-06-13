@@ -50,8 +50,9 @@ export function renderDropdown(records, activeId, actions = {}) {
 function makeDropdownItem(rec, activeId, actions) {
   const { onActivateRecord, onEmptyHistory } = actions;
   const isCurrent = rec.id === activeId;
+  const isTemporary = rec.isTemporary || false;
   const item = document.createElement('div');
-  item.className = 'dd-item' + (isCurrent ? ' current' : '');
+  item.className = 'dd-item' + (isCurrent ? ' current' : '') + (isTemporary ? ' temporary' : '');
 
   const body = document.createElement('div');
   body.className = 'dd-item-body';
@@ -65,7 +66,7 @@ function makeDropdownItem(rec, activeId, actions) {
   if (isCurrent) {
     const badge = document.createElement('span');
     badge.className = 'dd-current-badge';
-    badge.textContent = 'open';
+    badge.textContent = isTemporary ? 'open (session)' : 'open';
     labelRow.appendChild(labelText);
     labelRow.appendChild(badge);
   } else {
@@ -74,9 +75,13 @@ function makeDropdownItem(rec, activeId, actions) {
 
   const metaRow = document.createElement('div');
   metaRow.className = 'dd-item-meta';
-  metaRow.textContent = (rec.label && rec.label.trim())
-    ? `Last viewed: ${formatDate(rec.lastOpened)}`
-    : formatDate(rec.lastOpened);
+  if (isTemporary) {
+    metaRow.textContent = 'Session-only (not saved)';
+  } else {
+    metaRow.textContent = (rec.label && rec.label.trim())
+      ? `Last viewed: ${formatDate(rec.lastOpened)}`
+      : formatDate(rec.lastOpened);
+  }
 
   body.appendChild(labelRow);
   body.appendChild(metaRow);
@@ -91,89 +96,92 @@ function makeDropdownItem(rec, activeId, actions) {
   const actionsEl = document.createElement('div');
   actionsEl.className = 'dd-item-actions';
 
-  const renameBtn = document.createElement('button');
-  renameBtn.className = 'dd-icon-btn';
-  renameBtn.title = 'Rename';
-  renameBtn.innerHTML = '✎';
+  // Disable rename/delete for temporary (session-only) records
+  if (!isTemporary) {
+    const renameBtn = document.createElement('button');
+    renameBtn.className = 'dd-icon-btn';
+    renameBtn.title = 'Rename';
+    renameBtn.innerHTML = '✎';
 
-  renameBtn.addEventListener('click', async e => {
-    e.stopPropagation();
-    const input = document.createElement('input');
-    input.className = 'dd-label-input';
-    input.value = rec.label || '';
-    input.placeholder = rec.handle.name;
-    input.maxLength = 48;
+    renameBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const input = document.createElement('input');
+      input.className = 'dd-label-input';
+      input.value = rec.label || '';
+      input.placeholder = rec.handle.name;
+      input.maxLength = 48;
 
-    labelRow.replaceWith(input);
-    input.focus();
-    input.select();
+      labelRow.replaceWith(input);
+      input.focus();
+      input.select();
 
-    const confirmBtn = document.createElement('button');
-    confirmBtn.className = 'dd-icon-btn confirm';
-    confirmBtn.title = 'Save';
-    confirmBtn.innerHTML = '✓';
+      const confirmBtn = document.createElement('button');
+      confirmBtn.className = 'dd-icon-btn confirm';
+      confirmBtn.title = 'Save';
+      confirmBtn.innerHTML = '✓';
 
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'dd-icon-btn';
-    cancelBtn.title = 'Cancel';
-    cancelBtn.innerHTML = '✕';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'dd-icon-btn';
+      cancelBtn.title = 'Cancel';
+      cancelBtn.innerHTML = '✕';
 
-    actionsEl.innerHTML = '';
-    actionsEl.appendChild(confirmBtn);
-    actionsEl.appendChild(cancelBtn);
+      actionsEl.innerHTML = '';
+      actionsEl.appendChild(confirmBtn);
+      actionsEl.appendChild(cancelBtn);
 
-    const commit = async () => {
-      rec.label = input.value.trim();
-      await dbPut(rec);
-      if (rec.id === state.currentRecId) {
-        dom.pathText.textContent = displayName(rec);
-      }
-      const updated = await dbGetAll();
-      renderDropdown(updated, state.currentRecId, actions);
-    };
+      const commit = async () => {
+        rec.label = input.value.trim();
+        await dbPut(rec);
+        if (rec.id === state.currentRecId) {
+          dom.pathText.textContent = displayName(rec);
+        }
+        const updated = await dbGetAll();
+        renderDropdown(updated, state.currentRecId, actions);
+      };
 
-    const cancel = async () => {
-      const updated = await dbGetAll();
-      renderDropdown(updated, state.currentRecId, actions);
-    };
+      const cancel = async () => {
+        const updated = await dbGetAll();
+        renderDropdown(updated, state.currentRecId, actions);
+      };
 
-    confirmBtn.addEventListener('click', e => { e.stopPropagation(); commit(); });
-    cancelBtn.addEventListener('click', e => { e.stopPropagation(); cancel(); });
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter')  { e.preventDefault(); commit(); }
-      if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+      confirmBtn.addEventListener('click', e => { e.stopPropagation(); commit(); });
+      cancelBtn.addEventListener('click', e => { e.stopPropagation(); cancel(); });
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  { e.preventDefault(); commit(); }
+        if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+      });
     });
-  });
 
-  const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'dd-icon-btn danger';
-  deleteBtn.title = 'Remove from history';
-  deleteBtn.innerHTML = '✕';
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'dd-icon-btn danger';
+    deleteBtn.title = 'Remove from history';
+    deleteBtn.innerHTML = '✕';
 
-  deleteBtn.addEventListener('click', async e => {
-    e.stopPropagation();
-    await dbDelete(rec.id);
+    deleteBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      await dbDelete(rec.id);
 
-    if (rec.id === state.currentRecId) {
-      state.currentRecId = null;
-      state.rootHandle = null;
-      dom.pathText.textContent = 'No folder open';
-      dom.pathText.classList.remove('has-path');
-      dom.treeRoot.innerHTML = '';
-    }
+      if (rec.id === state.currentRecId) {
+        state.currentRecId = null;
+        state.rootHandle = null;
+        dom.pathText.textContent = 'No folder open';
+        dom.pathText.classList.remove('has-path');
+        dom.treeRoot.innerHTML = '';
+      }
 
-    const updated = await dbGetAll();
-    renderDropdown(updated, state.currentRecId, actions);
+      const updated = await dbGetAll();
+      renderDropdown(updated, state.currentRecId, actions);
 
-    if (updated.length === 0) {
-      dom.pathDropdown.classList.remove('open');
-      dom.pathBtn.classList.remove('open');
-      onEmptyHistory();
-    }
-  });
+      if (updated.length === 0) {
+        dom.pathDropdown.classList.remove('open');
+        dom.pathBtn.classList.remove('open');
+        onEmptyHistory();
+      }
+    });
 
-  actionsEl.appendChild(renameBtn);
-  actionsEl.appendChild(deleteBtn);
+    actionsEl.appendChild(renameBtn);
+    actionsEl.appendChild(deleteBtn);
+  }
 
   item.appendChild(body);
   item.appendChild(actionsEl);
