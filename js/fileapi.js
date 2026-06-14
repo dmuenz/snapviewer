@@ -14,7 +14,7 @@ export const BROWSER_CAPABILITIES = {
 /**
  * Attempt to open a directory via showDirectoryPicker (if available) or file input (fallback).
  * Returns { root, isTemporary, errorMsg }.
- *   root: A handle-like object with async iteration support
+ *   root: A handle-like object with async iteration support (pointing to _snaps)
  *   isTemporary: true if using webkitdirectory (session-only), false if using Directory API (persistent)
  *   errorMsg: string if failed
  */
@@ -74,9 +74,6 @@ async function pickDirectoryFallback() {
         return;
       }
 
-      // Reconstruct folder structure from FileList
-      const root = reconstructDirectoryHandle(files);
-
       // Check if _snaps folder exists
       if (!hasSnapsFolder(files)) {
         const errorMsg = `"${SNAPS_DIR}" folder not found. Please select a folder that contains _snaps.`;
@@ -84,7 +81,10 @@ async function pickDirectoryFallback() {
         return;
       }
 
-      resolve({ root, isTemporary: true, errorMsg: null });
+      // Reconstruct folder structure from FileList and return the _snaps handle
+      const snapsHandle = reconstructSnapsHandle(files);
+
+      resolve({ root: snapsHandle, isTemporary: true, errorMsg: null });
     };
 
     input.onerror = () => {
@@ -105,48 +105,53 @@ function hasSnapsFolder(files) {
 }
 
 /**
- * Reconstruct a handle-like object from FileList that supports async iteration.
- * Structure: { values(), getDirectoryHandle(), name, getFile() methods }
+ * Build a file map from FileList and return a handle pointing to the _snaps directory.
  */
-function reconstructDirectoryHandle(files) {
-  const fileMap = new Map(); // path -> File object
-  const dirSet = new Set(); // set of directory paths
+function reconstructSnapsHandle(files) {
+  const fileMap = new Map(); // _snaps-relative path -> File object
 
-  // Populate map and directory set
+  // Populate map with paths relative to _snaps
   for (const file of files) {
-    fileMap.set(file.webkitRelativePath, file);
-    const parts = file.webkitRelativePath.split('/');
-    for (let i = 0; i < parts.length - 1; i++) {
-      dirSet.add(parts.slice(0, i + 1).join('/'));
+    const path = file.webkitRelativePath;
+    if (path.startsWith(SNAPS_DIR + '/')) {
+      const snapsRelativePath = path.substring(SNAPS_DIR.length + 1); // Remove "_snaps/" prefix
+      fileMap.set(snapsRelativePath, file);
     }
   }
 
-  // Return root handle
-  return createHandleForPath('', fileMap, dirSet, files);
+  // Return handle pointing to _snaps directory
+  return createHandleForPath('', fileMap, SNAPS_DIR);
 }
 
 /**
- * Create a handle object for a given path
+ * Create a handle object for a given path within _snaps
  */
-function createHandleForPath(basePath, fileMap, dirSet, allFiles) {
+function createHandleForPath(basePath, fileMap, dirName) {
   // Get all immediate children of this directory
   const children = new Map(); // name -> { kind, path, file? }
 
   for (const [filePath, file] of fileMap) {
     const parts = filePath.split('/').filter(Boolean);
+    
     if (basePath === '') {
-      // Root level
+      // Root of _snaps
       if (parts.length === 1) {
+        // Direct child file
         children.set(parts[0], { kind: 'file', path: filePath, file });
       } else if (parts.length > 1) {
+        // Direct child directory
         children.set(parts[0], { kind: 'directory', path: parts[0] });
       }
     } else {
+      // Inside a subdirectory
       const baseParts = basePath.split('/').filter(Boolean);
-      if (parts.length === baseParts.length + 1) {
+      if (parts.length === baseParts.length + 1 && filePath.startsWith(basePath + '/')) {
+        // Direct child file
         children.set(parts[baseParts.length], { kind: 'file', path: filePath, file });
       } else if (parts.length > baseParts.length + 1 && filePath.startsWith(basePath + '/')) {
-        children.set(parts[baseParts.length], { kind: 'directory', path: parts.slice(0, baseParts.length + 1).join('/') });
+        // Direct child directory
+        const nextDir = parts.slice(0, baseParts.length + 1).join('/');
+        children.set(parts[baseParts.length], { kind: 'directory', path: nextDir });
       }
     }
   }
@@ -179,7 +184,7 @@ function createHandleForPath(basePath, fileMap, dirSet, allFiles) {
           name: entry.name,
           kind: 'directory',
           getFile: null,
-          getDirectoryHandle: async () => createHandleForPath(entry.path, fileMap, dirSet, allFiles)
+          getDirectoryHandle: async () => createHandleForPath(entry.path, fileMap, dirName)
         };
       }
     }
@@ -187,7 +192,7 @@ function createHandleForPath(basePath, fileMap, dirSet, allFiles) {
 
   // Create handle object
   const handle = {
-    name: basePath ? basePath.split('/').pop() : 'root',
+    name: basePath ? basePath.split('/').pop() : dirName,
     path: basePath,
 
     // values() method for for-await-of compatibility
@@ -206,7 +211,7 @@ function createHandleForPath(basePath, fileMap, dirSet, allFiles) {
       if (!child || child.kind !== 'directory') {
         throw new Error(`Directory "${name}" not found`);
       }
-      return createHandleForPath(child.path, fileMap, dirSet, allFiles);
+      return createHandleForPath(child.path, fileMap, dirName);
     }
   };
 
