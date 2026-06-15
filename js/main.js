@@ -15,17 +15,22 @@ import { initTooltipTracking } from './tooltip.js';
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
   onOpenSnaps: () => openSnaps(withRenderDropdown, showReadySplash),
-  onActivateRecord: (rec) => activateRecord(rec, withRenderDropdown, showReadySplash),
-  onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown)
+  onActivateRecord: rec => activateRecord(rec, withRenderDropdown, showReadySplash),
+  onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: false })
 };
 
-// Small wrapper to keep call sites concise.
+// Wrapper to keep call sites concise.
 function withRenderDropdown(records, activeId) {
   renderDropdown(records, activeId, dropdownActions);
 }
 
 // Path dropdown open handler (reload records each open).
 initPathDropdownEvents(async () => {
+  // In fallback mode we have no persisted handles list.
+  if (state.sourceMode !== 'fs-handle') {
+    withRenderDropdown([], null);
+    return;
+  }
   const records = await dbGetAll();
   withRenderDropdown(records, state.currentRecId);
 });
@@ -38,9 +43,17 @@ initTooltipTracking();
 
 // Boot flow.
 (async function boot() {
+  const hasDirPicker = typeof window.showDirectoryPicker === 'function';
+
+  // If no handle API, show fallback-aware splash.
+  if (!hasDirPicker) {
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: true });
+    return;
+  }
+
   const records = await dbGetAll();
   if (records.length === 0) {
-    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: false });
     return;
   }
 

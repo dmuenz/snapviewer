@@ -5,16 +5,27 @@ import { formatDate, formatBytes } from './helpers.js';
 
 let ttHideTimer = null;
 
+// Resolve a File object from either source mode.
+async function resolveFile(fileRef) {
+  if (!fileRef) throw new Error('Missing file reference.');
+
+  if (fileRef.kind === 'fs-file-handle') return await fileRef.handle.getFile();
+  if (fileRef.kind === 'fallback-file') return fileRef.file;
+  if (typeof fileRef.getFile === 'function') return await fileRef.getFile();
+
+  throw new Error('Unsupported file reference.');
+}
+
 // Populate/show tooltip for a file entry hover event.
-export async function showTooltip(e, fileHandle) {
+export async function showTooltip(e, fileRef) {
   clearTimeout(ttHideTimer);
   try {
-    const file  = await fileHandle.getFile();
-    dom.ttName.textContent = fileHandle.name;
+    const file = await resolveFile(fileRef);
+    dom.ttName.textContent = fileRef.name || file.name || 'File';
     dom.ttDate.textContent = formatDate(file.lastModified);
     dom.ttSize.textContent = formatBytes(file.size);
   } catch {
-    dom.ttName.textContent = fileHandle.name;
+    dom.ttName.textContent = fileRef?.name || 'File';
     dom.ttDate.textContent = '—';
     dom.ttSize.textContent = '—';
   }
