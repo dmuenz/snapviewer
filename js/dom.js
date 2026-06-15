@@ -7,6 +7,8 @@ export const $ = id => document.getElementById(id);
 export const dom = {
   treeRoot: $('tree-root'),
   folderInputFallback: $('folder-input-fallback'),
+  fallbackBanner: $('fallback-banner'),
+  fallbackBannerClose: $('fallback-banner-close'),
   sortBtn: $('btn-sort'),
   sortLabel: $('sort-label'),
   filterBtn: $('btn-filter'),
