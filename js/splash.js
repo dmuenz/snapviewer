@@ -1,18 +1,42 @@
-// // Purpose: Welcome/return/ready splash rendering.
+// Welcome/return/ready splash rendering and related CTA wiring.
 
 import { dom, $ } from './dom.js';
 import { escHtml, displayName } from './helpers.js';
 
 // First-run splash prompting user to open a `_snaps` folder.
-export function showSplash(onOpenSnaps, renderDropdown) {
+// If fallback mode is active, show compatibility note and shorter intro copy.
+export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
+  const { fallbackMode = false } = options;
+
+  const intro = fallbackMode
+    ? `Click below to open a <strong>_snaps</strong> folder.`
+    : `Click below to open a <strong>_snaps</strong> folder.
+       Your folders will be remembered for next time.`;
+
+  const fallbackNote = fallbackMode
+    ? `<div style="margin-top:24px;font-size:0.78rem;color:var(--text-dim);max-width:500px;line-height:1.55;">
+         <p style="text-align:left; max-width:100%;">
+           🛈 <strong>Browser compatibility note:</strong>
+           Several SnapViewer features are not available in your browser.
+           Switch to Chrome or Edge to enable these features:         
+         </p>
+         <ul style="text-align:left;">
+           <li>Point to the _snaps folders for multiple packages and easily toggle between them.</li>
+           <li>Remember all previously accessed _snaps folders across browsing sessions.</li>
+           <li>Add newly created snapshot files to the directory list without reopening the _snaps folder.</li>
+         </ul>
+       </div>`
+    : '';
+
   dom.contentBody.innerHTML = `
     <div class="welcome">
       <div class="big-icon">📁</div>
       <h2>Welcome to SnapViewer</h2>
-      <p>Click below to open a <strong>_snaps</strong> folder.
-         Your folders will be remembered for next time.</p>
+      <p>${intro}</p>
       <button id="open-btn">Open _snaps folder</button>
+      ${fallbackNote}
     </div>`;
+
   $('open-btn').addEventListener('click', onOpenSnaps);
   renderDropdown([], null);
 }

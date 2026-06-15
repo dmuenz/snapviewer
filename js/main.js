@@ -16,10 +16,10 @@ import { initTooltipTracking } from './tooltip.js';
 const dropdownActions = {
   onOpenSnaps: () => openSnaps(withRenderDropdown, showReadySplash),
   onActivateRecord: rec => activateRecord(rec, withRenderDropdown, showReadySplash),
-  onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown)
+  onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: false })
 };
 
-// Small wrapper to keep call sites concise.
+// Wrapper to keep call sites concise.
 function withRenderDropdown(records, activeId) {
   renderDropdown(records, activeId, dropdownActions);
 }
@@ -45,15 +45,15 @@ initTooltipTracking();
 (async function boot() {
   const hasDirPicker = typeof window.showDirectoryPicker === 'function';
 
-  // If no handle API, start with generic splash (fallback opens from there).
+  // If no handle API, show fallback-aware splash.
   if (!hasDirPicker) {
-    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: true });
     return;
   }
 
   const records = await dbGetAll();
   if (records.length === 0) {
-    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: false });
     return;
   }
 
