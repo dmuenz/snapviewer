@@ -11,7 +11,6 @@ import { initControls } from './controls.js';
 import { initResizer } from './resizer.js';
 import { initZoom } from './zoom.js';
 import { initTooltipTracking } from './tooltip.js';
-import { initFallbackBanner, showFallbackBannerIfNeeded, hideFallbackBanner } from './fallbackBanner.js';
 
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
@@ -41,7 +40,6 @@ initControls();
 initResizer();
 initZoom();
 initTooltipTracking();
-initFallbackBanner();
 
 // Boot flow.
 (async function boot() {
@@ -52,8 +50,6 @@ initFallbackBanner();
     showSplash(dropdownActions.onOpenSnaps, withRenderDropdown, { fallbackMode: true });
     return;
   }
-
-  hideFallbackBanner();
 
   const records = await dbGetAll();
   if (records.length === 0) {

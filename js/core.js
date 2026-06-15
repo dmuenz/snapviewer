@@ -6,7 +6,6 @@ import { dbGetAll, dbPut, dbSetMeta, upsertHandle } from './db.js';
 import { escHtml, displayName } from './helpers.js';
 import { rebuildTree } from './tree.js';
 import { pickSnapsViaInput, setFallbackSource } from './fallbackPicker.js';
-import { showFallbackBannerIfNeeded, hideFallbackBanner } from './fallbackBanner.js';
 
 // Render a safe error message into the content panel.
 export function showError(msg) {
@@ -97,7 +96,6 @@ export async function openSnaps(renderDropdown, showReadySplash) {
   if (!hasDirPicker) {
     // Fallback mode
     try {
-      showFallbackBannerIfNeeded();
       const bundle = await pickSnapsViaInput(dom.folderInputFallback);
       setFallbackSource(bundle);
       await loadRoot(null, bundle, renderDropdown, showReadySplash);
@@ -112,8 +110,6 @@ export async function openSnaps(renderDropdown, showReadySplash) {
     const records = await dbGetAll();
     const startIn = records.length > 0 ? records[0].handle : 'documents';
     const parent  = await window.showDirectoryPicker({ mode: 'read', startIn });
-
-    hideFallbackBanner();
 
     let handle;
     try { handle = await parent.getDirectoryHandle(SNAPS_DIR); }
