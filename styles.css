@@ -445,6 +445,12 @@ html, body {
 .tree-row.dim-folder .row-name { color: var(--text-dim); }
 .tree-row.dim-folder .row-icon { opacity: 0.45; }
 
+/* Keyboard-focused tree row */
+.tree-row.kb-focus {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
 .row-arrow {
   flex-shrink: 0;
   width: 14px;
