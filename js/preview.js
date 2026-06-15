@@ -5,9 +5,29 @@ import { dom, $ } from './dom.js';
 import { extOf, escHtml, formatDate } from './helpers.js';
 import { updateZoomButtons } from './zoom.js';
 
+// Resolve a File object from either source mode.
+async function resolveFile(fileRef) {
+  if (!fileRef) throw new Error('Missing file reference.');
+
+  if (fileRef.kind === 'fs-file-handle') {
+    return await fileRef.handle.getFile();
+  }
+
+  if (fileRef.kind === 'fallback-file') {
+    return fileRef.file;
+  }
+
+  // Backward compatibility (direct handle passed)
+  if (typeof fileRef.getFile === 'function') {
+    return await fileRef.getFile();
+  }
+
+  throw new Error('Unsupported file reference.');
+}
+
 // Preview selected file in content area with type-specific rendering.
-export async function previewFile(fileHandle) {
-  dom.breadcrumb.textContent = fileHandle.name;
+export async function previewFile(fileRef) {
+  dom.breadcrumb.textContent = fileRef?.name || 'File';
   dom.imgToolbar.classList.remove('visible');
 
   // Reset date badge until file metadata is loaded.
@@ -22,10 +42,11 @@ export async function previewFile(fileHandle) {
   }
 
   dom.contentBody.innerHTML = '<div style="color:var(--text-dim);padding:40px 0;text-align:center;font-size:0.85rem">Loading…</div>';
-  const ext = extOf(fileHandle.name);
+
+  const ext = extOf(fileRef?.name || '');
 
   try {
-    const file = await fileHandle.getFile();
+    const file = await resolveFile(fileRef);
 
     // Show modification date in header badge.
     dateBadge.textContent   = 'Modified ' + formatDate(file.lastModified);
@@ -56,7 +77,7 @@ export async function previewFile(fileHandle) {
       } else {
         const img = document.createElement('img');
         img.src = url;
-        img.alt = fileHandle.name;
+        img.alt = fileRef.name;
         img.className = state.currentZoom;
         $('img-output').appendChild(img);
       }

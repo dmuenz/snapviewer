@@ -15,7 +15,7 @@ import { initTooltipTracking } from './tooltip.js';
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
   onOpenSnaps: () => openSnaps(withRenderDropdown, showReadySplash),
-  onActivateRecord: (rec) => activateRecord(rec, withRenderDropdown, showReadySplash),
+  onActivateRecord: rec => activateRecord(rec, withRenderDropdown, showReadySplash),
   onEmptyHistory: () => showSplash(dropdownActions.onOpenSnaps, withRenderDropdown)
 };
 
@@ -26,6 +26,11 @@ function withRenderDropdown(records, activeId) {
 
 // Path dropdown open handler (reload records each open).
 initPathDropdownEvents(async () => {
+  // In fallback mode we have no persisted handles list.
+  if (state.sourceMode !== 'fs-handle') {
+    withRenderDropdown([], null);
+    return;
+  }
   const records = await dbGetAll();
   withRenderDropdown(records, state.currentRecId);
 });
@@ -38,6 +43,14 @@ initTooltipTracking();
 
 // Boot flow.
 (async function boot() {
+  const hasDirPicker = typeof window.showDirectoryPicker === 'function';
+
+  // If no handle API, start with generic splash (fallback opens from there).
+  if (!hasDirPicker) {
+    showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);
+    return;
+  }
+
   const records = await dbGetAll();
   if (records.length === 0) {
     showSplash(dropdownActions.onOpenSnaps, withRenderDropdown);

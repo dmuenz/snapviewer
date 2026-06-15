@@ -6,8 +6,23 @@ export const SNAPS_DIR = '_snaps';
 
 // Runtime state object used by UI/controllers/rendering modules.
 export const state = {
+  // Data source mode
+  // 'fs-handle' for showDirectoryPicker mode
+  // 'fallback-files' for webkitdirectory mode
+  sourceMode: 'fs-handle',
+
+  // FS Access API mode
   rootHandle: null,
   currentRecId: null,
+
+  // Fallback virtual folder state
+  fallback: {
+    label: '',
+    filesByPath: new Map(), // key: relative path within _snaps, value: File
+    rootNode: null          // virtual tree root
+  },
+
+  // Common UI state
   sortMode: 'alpha',
   filterText: '',
   activeRow: null,

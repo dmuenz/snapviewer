@@ -6,6 +6,7 @@ export const $ = id => document.getElementById(id);
 // Cached DOM references used throughout the app.
 export const dom = {
   treeRoot: $('tree-root'),
+  folderInputFallback: $('folder-input-fallback'),
   sortBtn: $('btn-sort'),
   sortLabel: $('sort-label'),
   filterBtn: $('btn-filter'),

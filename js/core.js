@@ -1,10 +1,11 @@
-// Core app actions (error/modal/open/activate/load).
+// Core app actions (error/modal/open/activate/load) with fs-picker + fallback support.
 
 import { state, SNAPS_DIR } from './state.js';
 import { dom, $ } from './dom.js';
 import { dbGetAll, dbPut, dbSetMeta, upsertHandle } from './db.js';
 import { escHtml, displayName } from './helpers.js';
 import { rebuildTree } from './tree.js';
+import { pickSnapsViaInput, setFallbackSource } from './fallbackPicker.js';
 
 // Render a safe error message into the content panel.
 export function showError(msg) {
@@ -40,15 +41,25 @@ export function promptNickname(suggestedLabel) {
   });
 }
 
-// Set active root handle, refresh folder dropdown/tree, and show ready splash.
-export async function loadRoot(handle, rec, renderDropdown, showReadySplash) {
-  state.rootHandle = handle;
-  state.openPaths  = new Set();
-  dom.pathText.textContent = displayName(rec);
-  dom.pathText.classList.add('has-path');
+// Set active source, refresh folder dropdown/tree, and show ready splash.
+export async function loadRoot(handleOrNull, recOrFallback, renderDropdown, showReadySplash) {
+  state.openPaths = new Set();
 
-  const records = await dbGetAll();
-  renderDropdown(records, state.currentRecId);
+  if (state.sourceMode === 'fs-handle') {
+    state.rootHandle = handleOrNull;
+    dom.pathText.textContent = displayName(recOrFallback);
+    dom.pathText.classList.add('has-path');
+
+    const records = await dbGetAll();
+    renderDropdown(records, state.currentRecId);
+  } else {
+    state.rootHandle = null;
+    dom.pathText.textContent = state.fallback.label || 'Selected Folder';
+    dom.pathText.classList.add('has-path');
+
+    // In fallback mode there is no persistent handle list to show.
+    renderDropdown([], null);
+  }
 
   await rebuildTree();
   showReadySplash();
@@ -71,12 +82,30 @@ export async function activateRecord(rec, renderDropdown, showReadySplash) {
   await dbPut(rec);
   await dbSetMeta('currentId', rec.id);
   state.currentRecId = rec.id;
+  state.sourceMode = 'fs-handle';
 
   await loadRoot(rec.handle, rec, renderDropdown, showReadySplash);
 }
 
-// Open directory picker, resolve `_snaps`, persist handle, and load.
+// Open source picker:
+// - showDirectoryPicker if available
+// - fallback input[webkitdirectory] otherwise
 export async function openSnaps(renderDropdown, showReadySplash) {
+  const hasDirPicker = typeof window.showDirectoryPicker === 'function';
+
+  if (!hasDirPicker) {
+    // Fallback mode
+    try {
+      const bundle = await pickSnapsViaInput(dom.folderInputFallback);
+      setFallbackSource(bundle);
+      await loadRoot(null, bundle, renderDropdown, showReadySplash);
+    } catch (e) {
+      showError('Error: ' + e.message);
+    }
+    return;
+  }
+
+  // FS Access API mode
   try {
     const records = await dbGetAll();
     const startIn = records.length > 0 ? records[0].handle : 'documents';
@@ -103,6 +132,7 @@ export async function openSnaps(renderDropdown, showReadySplash) {
 
     await dbSetMeta('currentId', id);
     state.currentRecId = id;
+    state.sourceMode = 'fs-handle';
 
     await loadRoot(handle, rec, renderDropdown, showReadySplash);
   } catch (e) {
