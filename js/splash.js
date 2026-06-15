@@ -16,7 +16,7 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
   const fallbackNote = fallbackMode
     ? `<div style="margin-top:24px;font-size:0.78rem;color:var(--text-dim);max-width:500px;line-height:1.55;">
          <p style="text-align:left; max-width:100%;">
-           🛈 <strong>Browser compatibility note:</strong>
+           <strong>Browser compatibility note:</strong>
            Several SnapViewer features are not available in your browser.
            Switch to Chrome or Edge to enable these features:         
          </p>
