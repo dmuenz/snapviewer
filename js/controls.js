@@ -14,41 +14,54 @@ export function initControls() {
     rebuildTree();
   });
 
-  // Toggle filter input visibility.
-  dom.filterBtn.addEventListener('click', () => {
-    const v = dom.filterBar.classList.toggle('visible');
-    dom.filterBtn.classList.toggle('active', v);
-    if (v) dom.filterInput.focus(); else clearFilter();
-  });
-
-  // Apply live filter text as user types.
-  dom.filterInput.addEventListener('input', () => {
-    state.filterText = dom.filterInput.value.trim().toLowerCase();
-    rebuildTree();
-  });
-
-  // Clear filter text and hide filter bar.
-  dom.clearBtn.addEventListener('click', () => {
-    clearFilter();
-    dom.filterBar.classList.remove('visible');
-    dom.filterBtn.classList.remove('active');
-  });
-
   // Collapse all folders in the tree.
   dom.collapseAllBtn.addEventListener('click', () => {
     collapseAllFolders();
   });
-}
+ 
+  // Live filter as user types.
+  dom.filterInput.addEventListener('input', () => {
+    state.filterText = dom.filterInput.value.trim().toLowerCase();
+    syncFilterClearButton();
+    rebuildTree();
+  });
 
-// Reset filter state/input and rebuild tree.
-function clearFilter() {
-  state.filterText = '';
-  dom.filterInput.value = '';
-  rebuildTree();
+  // ESC clears filter when typing in the filter box.
+  dom.filterInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (dom.filterInput.value.length > 0) {
+        clearFilter();
+      }
+    }
+  });
+
+  // Inset clear button.
+  dom.filterClearBtn.addEventListener('click', () => {
+    clearFilter();
+    dom.filterInput.focus();
+  });
+
+  // Initial clear-button visibility.
+  syncFilterClearButton();
 }
 
 // Collapse all expanded folders and rebuild tree.
 function collapseAllFolders() {
   state.openPaths = new Set();
   rebuildTree();
+}
+
+// Reset filter state/input and rebuild tree.
+function clearFilter() {
+  state.filterText = '';
+  dom.filterInput.value = '';
+  syncFilterClearButton();
+  rebuildTree();
+}
+
+// Show clear X only when there is text.
+function syncFilterClearButton() {
+  const hasText = dom.filterInput.value.trim().length > 0;
+  dom.filterClearBtn.classList.toggle('hidden', !hasText);
 }
