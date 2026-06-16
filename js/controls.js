@@ -1,8 +1,8 @@
-// Toolbar controls for sort/filter/clear and associated state updates.
+// Toolbar controls for tree viewer and associated state updates.
 
 import { state } from './state.js';
 import { dom } from './dom.js';
-import { rebuildTree } from './tree.js';
+import { rebuildTree, collapseAllFolders } from './tree.js';
 
 // Wire control event handlers for sort and filter UI.
 export function initControls() {
@@ -32,6 +32,11 @@ export function initControls() {
     clearFilter();
     dom.filterBar.classList.remove('visible');
     dom.filterBtn.classList.remove('active');
+  });
+
+  // Collapse all folders in the tree.
+  dom.collapseAllBtn?.addEventListener('click', async () => {
+    await collapseAllFolders();
   });
 }
 

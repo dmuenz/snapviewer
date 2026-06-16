@@ -22,6 +22,12 @@ export async function rebuildTree() {
   }
 }
 
+// Collapse all expanded folders and rebuild tree.
+export async function collapseAllFolders() {
+  state.openPaths = new Set();
+  await rebuildTree();
+}
+
 // Build tree from File System Access directory handles.
 async function buildTreeFromHandle(dirHandle, container, depth, gen, pathPrefix, openPaths) {
   const entries = [];
