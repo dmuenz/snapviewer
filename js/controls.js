@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { dom } from './dom.js';
-import { rebuildTree, collapseAllFolders } from './tree.js';
+import { rebuildTree } from './tree.js';
 
 // Wire control event handlers for sort and filter UI.
 export function initControls() {
@@ -35,8 +35,8 @@ export function initControls() {
   });
 
   // Collapse all folders in the tree.
-  dom.collapseAllBtn?.addEventListener('click', async () => {
-    await collapseAllFolders();
+  dom.collapseAllBtn.addEventListener('click', () => {
+    collapseAllFolders();
   });
 }
 
@@ -44,5 +44,11 @@ export function initControls() {
 function clearFilter() {
   state.filterText = '';
   dom.filterInput.value = '';
+  rebuildTree();
+}
+
+// Collapse all expanded folders and rebuild tree.
+function collapseAllFolders() {
+  state.openPaths = new Set();
   rebuildTree();
 }
