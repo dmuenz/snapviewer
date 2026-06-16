@@ -12,6 +12,7 @@ import { initResizer } from './resizer.js';
 import { initZoom } from './zoom.js';
 import { initTooltipTracking } from './tooltip.js';
 import { initTreeKeyboard } from './treeKeyboard.js';
+import { initKeyboardHint, showKeyboardHint } from './treeKeyboardHint.js';
 
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
@@ -42,6 +43,8 @@ initResizer();
 initZoom();
 initTooltipTracking();
 initTreeKeyboard();
+initKeyboardHint();
+showKeyboardHint();
 
 // Boot flow.
 (async function boot() {

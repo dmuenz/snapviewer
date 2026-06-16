@@ -25,5 +25,7 @@ export const dom = {
   tooltip: $('file-tooltip'),
   ttName: $('tt-name'),
   ttDate: $('tt-date'),
-  ttSize: $('tt-size')
+  ttSize: $('tt-size'),
+  kbdHintChip: $('kbd-hint-chip'),
+  kbdHintClose: $('kbd-hint-close')
 };
