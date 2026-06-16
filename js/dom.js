@@ -11,6 +11,7 @@ export const dom = {
   sortLabel: $('sort-label'),
   filterBtn: $('btn-filter'),
   clearBtn: $('btn-clear'),
+  collapseAllBtn: $('btn-collapse-all'),
   filterBar: $('filter-bar'),
   filterInput: $('filter-input'),
   contentBody: $('content-body'),

@@ -1,4 +1,4 @@
-// Toolbar controls for sort/filter/clear and associated state updates.
+// Toolbar controls for tree viewer and associated state updates.
 
 import { state } from './state.js';
 import { dom } from './dom.js';
@@ -33,11 +33,22 @@ export function initControls() {
     dom.filterBar.classList.remove('visible');
     dom.filterBtn.classList.remove('active');
   });
+
+  // Collapse all folders in the tree.
+  dom.collapseAllBtn.addEventListener('click', () => {
+    collapseAllFolders();
+  });
 }
 
 // Reset filter state/input and rebuild tree.
 function clearFilter() {
   state.filterText = '';
   dom.filterInput.value = '';
+  rebuildTree();
+}
+
+// Collapse all expanded folders and rebuild tree.
+function collapseAllFolders() {
+  state.openPaths = new Set();
   rebuildTree();
 }
