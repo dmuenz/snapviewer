@@ -51,14 +51,48 @@ export function pickSnapsViaInput(inputEl) {
         // Find files that contain /_snaps/ in webkitRelativePath.
         const matches = [];
         for (const f of files) {
-          const raw = (f.webkitRelativePath || '').replace(/\\/g, '/');
-          const idx = raw.indexOf(`/${SNAPS_DIR}/`);
-          if (idx >= 0) {
-            const rel = raw.slice(idx + (`/${SNAPS_DIR}/`).length);
-            if (rel) matches.push({ file: f, rel });
-          } else if (raw.startsWith(`${SNAPS_DIR}/`)) {
-            const rel = raw.slice(`${SNAPS_DIR}/`.length);
-            if (rel) matches.push({ file: f, rel });
+          const raw = (f.webkitRelativePath || '').replace(/\\/g, '/'); // e.g. mypackage/tests/testthat/_snaps/a.md
+          const parts = raw.split('/').filter(Boolean);
+        
+          // rel to selected folder content (strip selected-folder segment)
+          // webkitRelativePath is always "<selectedFolderName>/..."
+          if (parts.length < 2) continue;
+          const relFromSelected = parts.slice(1); // drop selected root dir name
+        
+          // Accepted if selected folder is _snaps directly:
+          // relFromSelected like ["file.md"] (cannot reliably detect this from files alone),
+          // or if files come through "_snaps/..." when selected folder is parent.
+          //
+          // Primary accepted package pattern:
+          // tests/testthat/_snaps/<...>
+          const stdPrefix = ['tests', 'testthat', SNAPS_DIR];
+        
+          const hasStdPrefix =
+            relFromSelected.length >= 4 &&
+            relFromSelected[0] === stdPrefix[0] &&
+            relFromSelected[1] === stdPrefix[1] &&
+            relFromSelected[2] === stdPrefix[2];
+        
+          // Also accept any selection where path includes ".../tests/testthat/_snaps/..."
+          // relative to selected folder descendants:
+          let idx = -1;
+          for (let i = 0; i <= relFromSelected.length - 3; i++) {
+            if (
+              relFromSelected[i] === 'tests' &&
+              relFromSelected[i + 1] === 'testthat' &&
+              relFromSelected[i + 2] === SNAPS_DIR
+            ) {
+              idx = i;
+              break;
+            }
+          }
+        
+          if (hasStdPrefix || idx >= 0) {
+            const snapsStart = hasStdPrefix ? 3 : idx + 3;
+            const relInsideSnaps = relFromSelected.slice(snapsStart).join('/');
+            if (relInsideSnaps) {
+              matches.push({ file: f, rel: relInsideSnaps });
+            }
           }
         }
 
