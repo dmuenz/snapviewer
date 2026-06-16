@@ -660,8 +660,7 @@ html, body {
 
 #img-output img {
   display: block;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 0 16px rgb(115 108 161);
 }
 #img-output img.zoom-fit-width  { width: 100%; height: auto; }
 #img-output img.zoom-fit-height { width: auto; height: calc(100vh - var(--header-h) - 44px - 56px - 20px); max-width: none; }
@@ -669,8 +668,7 @@ html, body {
 
 #img-output object {
   display: block;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 0 16px rgb(115 108 161);
   background: #fff;
 }
 #img-output object.zoom-fit-width  { width: 100%; min-height: 300px; }
