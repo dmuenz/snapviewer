@@ -110,10 +110,8 @@ export async function openSnaps(renderDropdown, showReadySplash) {
     const records = await dbGetAll();
     const startIn = records.length > 0 ? records[0].handle : 'documents';
     const parent  = await window.showDirectoryPicker({ mode: 'read', startIn });
-
-    let handle;
-    try { handle = await parent.getDirectoryHandle(SNAPS_DIR); }
-    catch { handle = parent.name === SNAPS_DIR ? parent : null; }
+    const suggestedNickname = await getSuggestedNicknameFromSelection(parent);
+    const handle  = await resolveSnapsHandleFromSelection(parent);
 
     if (!handle) {
       showError(`"${SNAPS_DIR}" not found inside "${escHtml(parent.name)}". Please pick a folder that contains _snaps.`);
@@ -125,7 +123,7 @@ export async function openSnaps(renderDropdown, showReadySplash) {
     const rec = allRecs.find(r => r.id === id);
 
     if (isNew) {
-      const label = await promptNickname('');
+      const label = await promptNickname(suggestedNickname);
       rec.label = label;
       await dbPut(rec);
     }
@@ -138,6 +136,50 @@ export async function openSnaps(renderDropdown, showReadySplash) {
   } catch (e) {
     if (e.name !== 'AbortError') showError('Error: ' + e.message);
   }
+}
+
+// Return package folder name as nickname suggestion if selected folder looks like package root.
+async function getSuggestedNicknameFromSelection(selectedDir) {
+  if (!selectedDir || selectedDir.name === SNAPS_DIR) return '';
+
+  try {
+    const tests = await selectedDir.getDirectoryHandle('tests');
+    const testthat = await tests.getDirectoryHandle('testthat');
+    await testthat.getDirectoryHandle(SNAPS_DIR);
+    return selectedDir.name; // e.g. "mypackage"
+  } catch {
+    return '';
+  }
+}
+
+// Try to resolve a _snaps directory from any selected folder in package hierarchy.
+async function resolveSnapsHandleFromSelection(selectedDir) {
+  // Case 1: user directly selected _snaps
+  if (selectedDir.name === SNAPS_DIR) return selectedDir;
+
+  // Case 2: package-root or higher-level standard path: tests/testthat/_snaps
+  try {
+    const tests = await selectedDir.getDirectoryHandle('tests');
+    const testthat = await tests.getDirectoryHandle('testthat');
+    const snaps = await testthat.getDirectoryHandle(SNAPS_DIR);
+    return snaps;
+  } catch {
+    // continue to recursive search
+  }
+
+  // Case 3: recursive descendant search for first folder named _snaps
+  return await findDirectoryByName(selectedDir, SNAPS_DIR);
+}
+
+// Depth-first search for first descendant directory matching name.
+async function findDirectoryByName(root, targetName) {
+  for await (const entry of root.values()) {
+    if (entry.kind !== 'directory') continue;
+    if (entry.name === targetName) return entry;
+    const nested = await findDirectoryByName(entry, targetName);
+    if (nested) return nested;
+  }
+  return null;
 }
 
 // Wire path button toggle and outside-click close behavior for dropdown.
