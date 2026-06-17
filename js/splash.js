@@ -6,6 +6,8 @@ import { escHtml, displayName } from './helpers.js';
 // First-run splash prompting user to open a `_snaps` folder.
 // If fallback mode is active, show compatibility note and shorter intro copy.
 export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
+  resetContentHeader('Open a snapshot folder to get started');
+
   const { fallbackMode = false } = options;
 
   const intro = fallbackMode
@@ -43,6 +45,8 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
 
 // Return splash that reopens most recent folder or lets user pick another.
 export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, onOpenSnaps, renderDropdown) {
+  resetContentHeader('Open a snapshot folder to get started');
+
   const display = displayName(mostRecent);
   dom.contentBody.innerHTML = `
     <div class="welcome">
@@ -62,10 +66,20 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
 
 // Post-load splash shown after folder is loaded.
 export function showReadySplash() {
+  resetContentHeader('Select a file to preview');
+
   dom.contentBody.innerHTML = `
     <div class="welcome">
       <div class="big-icon">📁</div>
       <h2>Folder loaded</h2>
       <p>Select any file from the tree on the left to preview it here.</p>
     </div>`;
+}
+
+// In content header, set breadcrumb text and hide everything else.
+function resetContentHeader(message) {
+  dom.breadcrumb.textContent  = message;
+  dom.dateBadge.style.display = 'none';
+  dom.dateBadge.textContent   = '';
+  dom.imgToolbar.classList.remove('visible');
 }
