@@ -31,9 +31,8 @@ export async function previewFile(fileRef) {
   dom.imgToolbar.classList.remove('visible');
 
   // Reset date badge until file metadata is loaded.
-  const dateBadge = $('file-date-badge');
-  dateBadge.style.display = 'none';
-  dateBadge.textContent   = '';
+  dom.dateBadge.style.display = 'none';
+  dom.dateBadge.textContent   = '';
 
   // Revoke previous object URL if present.
   if (state.currentMedia?.objectUrl) {
@@ -49,8 +48,8 @@ export async function previewFile(fileRef) {
     const file = await resolveFile(fileRef);
 
     // Show modification date in header badge.
-    dateBadge.textContent   = 'Modified ' + formatDate(file.lastModified);
-    dateBadge.style.display = 'block';
+    dom.dateBadge.textContent   = 'Modified ' + formatDate(file.lastModified);
+    dom.dateBadge.style.display = 'block';
 
     // Markdown/text file preview.
     if (EXT_MD.has(ext)) {

@@ -4,6 +4,7 @@ import { dom } from './dom.js';
 import { state } from './state.js';
 import { dbGetAll, dbPut, dbDelete } from './db.js';
 import { formatDate, displayName } from './helpers.js';
+import { showReturnSplash } from './splash.js';
 
 // Render entire dropdown list for folder history and bottom action.
 export function renderDropdown(records, activeId, actions = {}) {
@@ -48,7 +49,7 @@ export function renderDropdown(records, activeId, actions = {}) {
 
 // Build one dropdown row with label/meta + actions (rename/delete/switch).
 function makeDropdownItem(rec, activeId, actions) {
-  const { onActivateRecord, onEmptyHistory } = actions;
+  const { onActivateRecord, onEmptyHistory, onOpenSnaps } = actions;
   const isCurrent = rec.id === activeId;
   const item = document.createElement('div');
   item.className = 'dd-item' + (isCurrent ? ' current' : '');
@@ -153,22 +154,42 @@ function makeDropdownItem(rec, activeId, actions) {
   deleteBtn.addEventListener('click', async e => {
     e.stopPropagation();
     await dbDelete(rec.id);
-
-    if (rec.id === state.currentRecId) {
+  
+    const deletedCurrent = rec.id === state.currentRecId;
+  
+    if (deletedCurrent) {
       state.currentRecId = null;
       state.rootHandle = null;
+      state.sourceMode = 'fs-handle'; // neutral/default for return flow
       dom.pathText.textContent = 'No folder open';
       dom.pathText.classList.remove('has-path');
       dom.treeRoot.innerHTML = '';
     }
-
+  
     const updated = await dbGetAll();
     renderDropdown(updated, state.currentRecId, actions);
-
+  
     if (updated.length === 0) {
       dom.pathDropdown.classList.remove('open');
       dom.pathBtn.classList.remove('open');
       onEmptyHistory();
+      return;
+    }
+  
+    // if user deleted the currently loaded folder but other history exists,
+    // show return splash for the most recent remaining folder.
+    if (deletedCurrent) {
+      dom.pathDropdown.classList.remove('open');
+      dom.pathBtn.classList.remove('open');
+  
+      const mostRecent = updated[0];
+      showReturnSplash(
+        mostRecent,
+        updated,
+        () => onActivateRecord(mostRecent),
+        onOpenSnaps,
+        (records, activeId) => renderDropdown(records, activeId, actions)
+      );
     }
   });
 

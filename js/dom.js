@@ -14,6 +14,7 @@ export const dom = {
   filterClearBtn: $('filter-clear-btn'),
   contentBody: $('content-body'),
   breadcrumb: $('breadcrumb-text'),
+  dateBadge: $('file-date-badge'),
   imgToolbar: $('img-toolbar'),
   appEl: $('app'),
   pathBtn: $('path-btn'),

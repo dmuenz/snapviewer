@@ -6,6 +6,10 @@ import { escHtml, displayName } from './helpers.js';
 // First-run splash prompting user to open a `_snaps` folder.
 // If fallback mode is active, show compatibility note and shorter intro copy.
 export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
+  dom.breadcrumb.textContent  = 'Open a snapshot folder to get started';
+  dom.dateBadge.style.display = 'none';
+  dom.dateBadge.textContent   = '';
+
   const { fallbackMode = false } = options;
 
   const intro = fallbackMode
@@ -43,6 +47,10 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
 
 // Return splash that reopens most recent folder or lets user pick another.
 export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, onOpenSnaps, renderDropdown) {
+  dom.breadcrumb.textContent  = 'Open a snapshot folder to get started';
+  dom.dateBadge.style.display = 'none';
+  dom.dateBadge.textContent   = '';
+
   const display = displayName(mostRecent);
   dom.contentBody.innerHTML = `
     <div class="welcome">
@@ -62,6 +70,10 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
 
 // Post-load splash shown after folder is loaded.
 export function showReadySplash() {
+  dom.breadcrumb.textContent  = 'Select a file to preview';
+  dom.dateBadge.style.display = 'none';
+  dom.dateBadge.textContent   = '';
+
   dom.contentBody.innerHTML = `
     <div class="welcome">
       <div class="big-icon">📁</div>
