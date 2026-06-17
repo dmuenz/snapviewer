@@ -20,6 +20,7 @@
   --radius:      8px;
   --sidebar-w:   360px;
   --header-h:    52px;
+  --content-header-h: 38px;
 }
 
 html, body {
@@ -359,6 +360,7 @@ html, body {
   gap: 4px;
   padding: 6px 8px;
   border-bottom: 1px solid var(--border);
+  height: var(--content-header-h);
 }
 
 .tb-btn {
@@ -374,12 +376,55 @@ html, body {
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
   user-select: none;
+  height: 100%;
 }
-.tb-btn:hover  { background: var(--hover); border-color: var(--accent); color: var(--text-bright); }
-.tb-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--text-bright); }
+.tb-btn:hover {
+  background: var(--accent);
+  color: var(--text-bright);
+}
+.tb-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-bright);
+}
 .tb-btn .btn-icon { font-size: 0.85rem; }
+
+/* Sort segmented pill control */
+.sort-segment {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  background: transparent;
+  height: 100%;
+}
+
+.sort-seg-btn {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 4px 9px 4px 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sort-seg-btn + .sort-seg-btn {
+  border-left: 1px solid var(--border); /* dividing line */
+}
+
+.sort-seg-btn:hover {
+  background: var(--accent);
+  color: var(--text-bright);
+}
+.sort-seg-btn.active {
+  background: var(--accent-soft);
+  color: var(--text-bright);
+}
 
 #filter-bar {
   flex-shrink: 0;
@@ -596,7 +641,7 @@ html, body {
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  height: 44px;
+  height: var(--content-header-h);
   border-bottom: 1px solid var(--border);
 }
 .breadcrumb {
@@ -695,7 +740,7 @@ html, body {
   box-shadow: 0 0 16px rgb(115 108 161);
 }
 #img-output img.zoom-fit-width  { width: 100%; height: auto; }
-#img-output img.zoom-fit-height { width: auto; height: calc(100vh - var(--header-h) - 44px - 56px - 20px); max-width: none; }
+#img-output img.zoom-fit-height { width: auto; height: calc(100vh - var(--header-h) - var(--content-header-h) - 56px - 20px); max-width: none; }
 #img-output img.zoom-full       { width: auto; height: auto; max-width: none; }
 
 #img-output object {
@@ -704,7 +749,7 @@ html, body {
   background: #fff;
 }
 #img-output object.zoom-fit-width  { width: 100%; min-height: 300px; }
-#img-output object.zoom-fit-height { width: auto; height: calc(100vh - var(--header-h) - 44px - 56px - 20px); min-width: 300px; }
+#img-output object.zoom-fit-height { width: auto; height: calc(100vh - var(--header-h) - var(--content-header-h) - 56px - 20px); min-width: 300px; }
 #img-output object.zoom-full       { width: auto; min-height: 200px; min-width: 200px; }
 
 .err-msg { color: var(--danger); padding: 20px; font-size: 0.88rem; }

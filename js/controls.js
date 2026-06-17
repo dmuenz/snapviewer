@@ -6,11 +6,19 @@ import { rebuildTree } from './tree.js';
 
 // Wire control event handlers for sort and filter UI.
 export function initControls() {
-  // Toggle sort mode between alpha and recent.
-  dom.sortBtn.addEventListener('click', () => {
-    state.sortMode = state.sortMode === 'alpha' ? 'time' : 'alpha';
-    dom.sortLabel.textContent = state.sortMode === 'alpha' ? 'A–Z' : 'Recent';
-    dom.sortBtn.classList.toggle('active', state.sortMode === 'time');
+  // Sort: A–Z
+  dom.sortAlphaBtn.addEventListener('click', () => {
+    if (state.sortMode === 'alpha') return;
+    state.sortMode = 'alpha';
+    syncSortButtons();
+    rebuildTree();
+  });
+
+  // Sort: Recent
+  dom.sortRecentBtn.addEventListener('click', () => {
+    if (state.sortMode === 'time') return;
+    state.sortMode = 'time';
+    syncSortButtons();
     rebuildTree();
   });
 
@@ -42,8 +50,21 @@ export function initControls() {
     dom.filterInput.focus();
   });
 
+  // Initial state of sort buttons.
+  syncSortButtons();
+
   // Initial clear-button visibility.
   syncFilterClearButton();
+}
+
+// Keep sort segmented buttons' active/pressed state in sync with current sort mode.
+function syncSortButtons() {
+  const alpha = state.sortMode === 'alpha';
+  dom.sortAlphaBtn.classList.toggle('active', alpha);
+  dom.sortAlphaBtn.setAttribute('aria-pressed', alpha ? 'true' : 'false');
+
+  dom.sortRecentBtn.classList.toggle('active', !alpha);
+  dom.sortRecentBtn.setAttribute('aria-pressed', !alpha ? 'true' : 'false');
 }
 
 // Collapse all expanded folders and rebuild tree.
