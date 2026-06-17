@@ -1,5 +1,5 @@
 # 📷 SnapViewer
-[SnapViewer](https://dmuenz.github.io/snapviewer/) is a simple web app for viewing [testthat](https://testthat.r-lib.org/) snapshots in an R package. You point the app to the package's snapshot folder and it shows a list of all snapshot files, e.g. `.md` files created via `expect_snapshot()` and `.svg` files created via `vdiffr::expect_doppelganger()`. Select any file to view it.
+[SnapViewer](https://dmuenz.github.io/snapviewer/) is a simple web app for viewing [testthat](https://testthat.r-lib.org/) snapshots in an R package. You point the app to the package's snapshot folder on your computer and it shows a list of all snapshot files, e.g. `.md` files created via `expect_snapshot()` and `.svg` files created via `vdiffr::expect_doppelganger()`. Select any file to view it.
 
 You can point SnapViewer to the snapshot folders for multiple packages, and easily toggle between them. SnapViewer remembers all previously accessed folders across browsing sessions. These features rely an  experimental JavaScript method ([showDirectoryPicker](https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker)) which is implemented in Chrome and Edge but not in Firefox or Safari. So use Chrome or Edge for best compatibility.
 
