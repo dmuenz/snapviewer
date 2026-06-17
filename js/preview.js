@@ -1,4 +1,4 @@
-// File preview rendering (text/markdown/image), toolbar date badge, and media URL lifecycle.
+// File preview rendering (markdown/image), toolbar date badge, and media URL lifecycle.
 
 import { state, EXT_MD, EXT_IMG } from './state.js';
 import { dom, $ } from './dom.js';
