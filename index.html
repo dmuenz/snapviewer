@@ -21,6 +21,7 @@
       </button>
       <div id="path-dropdown"></div>
     </div>
+    <i class="bi bi-info-circle" id="about-btn" title="About SnapViewer"></i>
   </header>
 
   <!-- ── Sidebar ─────────────────────────────────────────────────── -->
@@ -89,6 +90,52 @@
     <div id="modal-actions">
       <button class="modal-btn" id="modal-skip">Skip</button>
       <button class="modal-btn primary" id="modal-save">Save nickname</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── About modal ---──────────────────────────────────────────────── -->
+<div id="about-overlay" class="about-overlay" style="display:none;">
+  <div id="about-modal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div class="about-header">
+      <h3 id="about-title">About <span style="font-weight: 700;"><span style="color:var(--accent);">Snap</span>Viewer</span></h3>
+      <button id="about-close" class="about-close" aria-label="Close About dialog">✕</button>
+    </div>
+    <div class="about-source">
+      <span class="about-author">Vide-coded by Daniel Muenz</span>
+      &nbsp;<a href="https://github.com/dmuenz/snapviewer/" target="_blank"><i class="bi bi-github"></i></a>
+    </div>
+
+    <div class="about-body">
+      <p>SnapViewer helps you browse and view <strong>testthat</strong> snapshot files in a local R package.</p>
+      <ul>
+        <li>Open snapshot folders and browse files in a tree view with
+          <span style="text-decoration:underline dotted;" title="↑ ↓ navigate • ← → collapse/expand • Enter/Space toggle">
+            easy keyboard navigation
+          </span>
+        </li>
+        <li>View markdown and image snapshots</li>
+        <li>Open folders for multiple packages and remember them across browsing sessions*</li>
+      </ul>
+      <p style="color:var(--text-dim);font-size:0.95em;">
+        * In browsers without File System Access support, SnapViewer uses a fallback mode with limited persistence.
+      </p>
+      <h4>Finding the snapshot folder</h4>
+      <p>
+        If your R package is named <code>package</code>, then the snapshot folder (if it exists) is
+        <code>package/tests/testthat/_snaps</code>. You can equivalently select any of the following folders, and
+        SnapViewer will find the <code>_snaps</code> folder:
+      </p>
+        <ul>
+          <li><code>package</code></li>
+          <li><code>package/tests</code></li>
+          <li><code>package/tests/testthat</code></li>
+          <li><code>package/tests/testthat/_snaps</code></li>
+        </ul>
+      <p>
+        Selecting the root <code>package</code> folder is best because then SnapViewer knows the package name and suggests this
+        as a nickname for labeling the snapshot folder within the app. Otherwise you can type in your own nickname.
+      </p>
     </div>
   </div>
 </div>

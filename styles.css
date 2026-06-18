@@ -54,14 +54,14 @@ html, body {
   z-index: 50;
 }
 
-#header .logo {
+#header .logo, #about-title .logo {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 0.04em;
   flex-shrink: 0;
 }
-#header .logo span { color: var(--text-bright); }
+#header .logo span, #about-title .logo span { color: var(--text-bright); }
 #header .logo #logo-subhead {
   font-size: 0.9rem;
   color: var(--text-dim);
@@ -341,6 +341,120 @@ html, body {
   color: #fff;
 }
 .modal-btn.primary:hover { background: #6a59e0; }
+
+/* ── About modal───────────────────────────────────────────────── */
+
+/* About button in header */
+#about-btn {
+  margin: 0 0 0 0;
+  border-radius: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.2rem;
+  cursor: default;
+  transition: background 0.15s, color 0.15s;
+}
+#about-btn:hover {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+/* About modal */
+.about-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.62);
+}
+.about-overlay.open {
+  display: flex;
+}
+
+.about-modal {
+  width: min(730px, 92vw);
+  max-height: 82vh;
+  overflow: auto;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--sidebar-bg);
+  box-shadow: 0 12px 42px rgba(0,0,0,0.55);
+  padding: 16px 18px 14px;
+}
+
+.about-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-header h3 {
+  font-size: 1rem;
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.about-close {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.about-close:hover {
+  background: var(--hover);
+  border-color: var(--border);
+  color: var(--text-bright);
+}
+
+.about-source {
+  font-size: 0.7rem;
+  color: var(--text-bright);
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+.about-source a {
+  font-size: 0.8rem;
+  color: var(--text-bright);
+}
+.about-source a:hover {
+  color: var(--accent);
+}
+
+.about-body {
+  font-size: 0.75rem;
+}
+.about-body p {
+  line-height: 1.55;
+  color: var(--text);
+}
+.about-body ul + p {
+  margin-top: 10px;
+}
+.about-body ul {
+  margin: 10px 0 0 18px;
+  color: var(--text);
+}
+.about-body li {
+  margin: 5px 0;
+}
+.about-body h4 {
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-size: 1.2em;
+}
+.about-body code {
+  font-family: 'Courier New', monospace;
+}
 
 /* ── Sidebar ──────────────────────────────────────────────────── */
 #sidebar {
