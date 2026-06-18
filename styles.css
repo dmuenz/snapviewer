@@ -375,9 +375,10 @@ html, body {
 }
 
 .about-modal {
-  width: min(700px, 92vw);
+  width: min(730px, 92vw);
   max-height: 82vh;
   overflow: auto;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--sidebar-bg);
@@ -429,10 +430,15 @@ html, body {
   color: var(--accent);
 }
 
+.about-body {
+  font-size: 0.75rem;
+}
 .about-body p {
-  font-size: 0.84rem;
   line-height: 1.55;
   color: var(--text);
+}
+.about-body ul + p {
+  margin-top: 10px;
 }
 .about-body ul {
   margin: 10px 0 0 18px;
@@ -440,11 +446,14 @@ html, body {
 }
 .about-body li {
   margin: 5px 0;
-  font-size: 0.84rem;
+}
+.about-body h4 {
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-size: 1.2em;
 }
 .about-body code {
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-  font-size: 0.7rem;
+  font-family: 'Courier New', monospace;
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────── */
