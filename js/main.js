@@ -8,6 +8,7 @@ import { initPathDropdownEvents, openSnaps, activateRecord } from './core.js';
 import { renderDropdown } from './dropdown.js';
 import { showSplash, showReturnSplash, showReadySplash } from './splash.js';
 import { initControls } from './controls.js';
+import { initAboutModal } from './about.js';
 import { initResizer } from './resizer.js';
 import { initZoom } from './zoom.js';
 import { initTooltipTracking } from './tooltip.js';
@@ -39,6 +40,7 @@ initPathDropdownEvents(async () => {
 
 // Initialize non-core UI handlers.
 initControls();
+initAboutModal();
 initResizer();
 initZoom();
 initTooltipTracking();
