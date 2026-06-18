@@ -38,7 +38,7 @@ export function renderDropdown(records, activeId, actions = {}) {
 
   const action = document.createElement('div');
   action.className = 'dd-action';
-  action.innerHTML = '<span>📁</span> Open a different _snaps folder…';
+  action.innerHTML = '<span>📁</span> Open a different snapshot folder…';
   action.addEventListener('click', () => {
     dom.pathDropdown.classList.remove('open');
     dom.pathBtn.classList.remove('open');

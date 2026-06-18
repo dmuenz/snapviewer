@@ -155,6 +155,29 @@
   </div>
 </div>
 
+<!-- ── Snapshot folder tooltip ───────────────────────────────────── -->
+<div id="snaps-help-tooltip" class="snaps-help-tooltip">
+  <div class="tt-name">What is a snapshot folder?</div>
+  <div class="tt-row" style="display:block; line-height:1.5;">
+    It's a folder named <code>_snaps</code> created by testthat.<br>
+    It contains snapshot files – markdown and images.<br>
+    In an R package, the path is:
+    <div style="margin-top:4px; margin-left: 16px; color:var(--text); font-family:'Courier New', monospace;">
+      tests/testthat/_snaps
+    </div>
+    <div style="margin-top:6px;">
+      <p>You can select any of the following:</p>
+      <ul style="margin:6px 0 0 16px;">
+        <li>the package root folder (best option),</li>
+        <li><code>tests</code>,</li>
+        <li><code>tests/testthat</code>,</li>
+        <li>or the <code>_snaps</code> folder directly.</li>
+      </ul>
+      <p>Whichever you pick, SnapViewer will find <code>_snaps</code>.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ── Fallback directory picker ─────────────────────────────────── -->
 <input id="folder-input-fallback" type="file" webkitdirectory multiple style="display:none" />
 

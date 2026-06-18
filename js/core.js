@@ -74,7 +74,7 @@ export async function activateRecord(rec, renderDropdown, showReadySplash) {
       return;
     }
   } catch {
-    showError('This folder is no longer accessible. Please open it again via "Open a different _snaps folder".');
+    showError('This folder is no longer accessible. Please open it again via "Open a different snapshot folder".');
     return;
   }
 

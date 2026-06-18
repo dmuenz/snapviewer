@@ -835,6 +835,49 @@ html, body {
 .welcome a { font-size: 0.8rem; color: var(--text-dim); text-decoration: none; }
 .welcome a:hover { color: var(--text); text-decoration: underline; }
 
+/* Splash help target */
+.snaps-help-target {
+  display: inline-block;
+  border-bottom: 1px dashed;
+  cursor: help;
+  line-height: 1.1;
+}
+
+.snaps-help-tooltip {
+  position: fixed;
+  z-index: 1001;
+  pointer-events: none;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #1e2235;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 460px;
+  color: var(--text-dim);
+}
+.snaps-help-tooltip.visible {
+  display: flex;
+}
+.snaps-help-tooltip .tt-name {
+  font-size: 0.82rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.snaps-help-tooltip .tt-row {
+  font-size: 0.82rem;
+}
+.snaps-help-tooltip .tt-row code {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+.snaps-help-tooltip .tt-row ul + p {
+  margin-top: 6px;
+}
+
 /* ── Plain-text display ───────────────────────────────────────── */
 #text-output {
   font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;

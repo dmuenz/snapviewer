@@ -2,6 +2,7 @@
 
 import { dom, $ } from './dom.js';
 import { escHtml, displayName } from './helpers.js';
+import { showSnapsHelpTooltip, hideSnapsHelpTooltip, positionSnapsHelpTooltip } from './snapsHelpTooltip.js';
 
 // First-run splash prompting user to open a `_snaps` folder.
 // If fallback mode is active, show compatibility note and shorter intro copy.
@@ -11,8 +12,8 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
   const { fallbackMode = false } = options;
 
   const intro = fallbackMode
-    ? `Click below to open a <strong>_snaps</strong> folder.`
-    : `Click below to open a <strong>_snaps</strong> folder.
+    ? `Click below to open a <span id="snaps-help-target" class="snaps-help-target">snapshot folder</span>.`
+    : `Click below to open a <span id="snaps-help-target" class="snaps-help-target">snapshot folder</span>.
        Your folders will be remembered for next time.`;
 
   const fallbackNote = fallbackMode
@@ -35,9 +36,16 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
       <div class="big-icon">📁</div>
       <h2>Welcome to SnapViewer</h2>
       <p>${intro}</p>
-      <button id="open-btn">Open _snaps folder</button>
+      <button id="open-btn">Open snapshot folder</button>
       ${fallbackNote}
     </div>`;
+
+  const target = $('snaps-help-target');
+  if (target) {
+    target.addEventListener('mouseenter', showSnapsHelpTooltip);
+    target.addEventListener('mouseleave', hideSnapsHelpTooltip);
+    target.addEventListener('mousemove',  positionSnapsHelpTooltip);
+  }
 
   $('open-btn').addEventListener('click', onOpenSnaps);
   renderDropdown([], null);
@@ -52,11 +60,11 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
     <div class="welcome">
       <div class="big-icon">📁</div>
       <h2>Welcome back</h2>
-      <p>Click below to reopen <strong>${escHtml(display)}</strong>,
+      <p>Click below to reopen <strong>${escHtml(display)}</strong> snapshots,
          or use the folder menu in the title bar to switch folders.</p>
-      <button id="open-btn">Open ${escHtml(display)}</button>
+      <button id="open-btn">Open ${escHtml(display)} snapshots</button>
       <p style="margin-top:10px">
-        <a id="pick-new" href="#">Open a different _snaps folder…</a>
+        <a id="pick-new" href="#">Open a different snapshot folder…</a>
       </p>
     </div>`;
   $('open-btn').addEventListener('click', onActivateMostRecent);
@@ -78,7 +86,19 @@ export function showReadySplash() {
 
 // In content header, set breadcrumb text and hide everything else.
 function resetContentHeader(message) {
-  dom.breadcrumb.textContent  = message;
+  if (message === 'Open a snapshot folder to get started') {
+    dom.breadcrumb.innerHTML = `Open a <span id="breadcrumb-snaps-help-target" class="snaps-help-target">snapshot folder</span> to get started`;
+
+    const target = $('breadcrumb-snaps-help-target');
+    if (target) {
+      target.addEventListener('mouseenter', showSnapsHelpTooltip);
+      target.addEventListener('mouseleave', hideSnapsHelpTooltip);
+      target.addEventListener('mousemove',  positionSnapsHelpTooltip);
+    }
+  } else {
+    dom.breadcrumb.textContent = message;
+  }
+
   dom.dateBadge.style.display = 'none';
   dom.dateBadge.textContent   = '';
   dom.imgToolbar.classList.remove('visible');
