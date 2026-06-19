@@ -1,6 +1,7 @@
 // Wire About button and modal open/close behavior.
 
 import { dom } from './dom.js';
+import { addListenersForTooltipTarget } from './infoTooltip.js';
 
 export function initAboutModal() {
   if (!dom.aboutBtn || !dom.aboutOverlay || !dom.aboutClose) return;
@@ -19,6 +20,8 @@ export function initAboutModal() {
       closeAbout();
     }
   });
+
+  addListenersForTooltipTarget('kbd-info-target', 'kbd-info-tooltip')
 }
 
 function openAbout() {

@@ -52,8 +52,8 @@
     <div id="kbd-hint-chip" class="kbd-hint-chip" style="display:none;">
       <span class="kbd-hint-text">
         <strong>Keyboard navigation:</strong><br>
-        <span style="font-family: monospace;">↑ ↓</span> navigate files & folders<br>
-        <span style="font-family: monospace;">← →</span> collapse/expand folder<br>
+        <i class="bi bi-caret-up-square-fill"></i> <i class="bi bi-caret-down-square-fill"></i> navigate files & folders<br>
+        <i class="bi bi-caret-left-square-fill"></i> <i class="bi bi-caret-right-square-fill"></i> collapse/expand folder<br>
         <strong>Enter/Space</strong> toggle folder
       </span>
       <button id="kbd-hint-close" class="kbd-hint-close" aria-label="Dismiss keyboard hint">✕</button>
@@ -107,10 +107,10 @@
     </div>
 
     <div class="about-body">
-      <p>SnapViewer helps you browse and view <strong>testthat</strong> snapshot files in a local R package.</p>
+      <p>SnapViewer helps you quickly browse and view <strong>testthat</strong> snapshot files in a local R package.</p>
       <ul>
         <li>Open snapshot folders and browse files in a tree view with
-          <span style="text-decoration:underline dotted;" title="↑ ↓ navigate • ← → collapse/expand • Enter/Space toggle">
+          <span id="kbd-info-target" class="tooltip-target">
             easy keyboard navigation
           </span>
         </li>
@@ -189,6 +189,16 @@
       <li>Remember all previously accessed snapshot folders across browsing sessions.</li>
       <li>Add newly created snapshot files to file list without re-selecting snapshot folder.</li>
     </ul>
+  </div>
+</div>
+
+<!-- ── Keyboard-help tooltip ─────────────────────────────────────── -->
+<div id="kbd-info-tooltip" class="info-tooltip">
+  <div class="tt-name">Keyboard navigation</div>
+  <div class="tt-row">
+    <i class="bi bi-caret-up-square-fill"></i> <i class="bi bi-caret-down-square-fill"></i> navigate files & folders<br>
+    <i class="bi bi-caret-left-square-fill"></i> <i class="bi bi-caret-right-square-fill"></i> collapse/expand folder<br>
+    <strong>Enter/Space</strong> toggle folder
   </div>
 </div>
 
