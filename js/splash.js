@@ -2,6 +2,7 @@
 
 import { dom, $ } from './dom.js';
 import { escHtml, displayName } from './helpers.js';
+import { addListenersForTooltipTarget } from './infoTooltip.js';
 
 // First-run splash prompting user to open a `_snaps` folder.
 // If fallback mode is active, show compatibility note and shorter intro copy.
@@ -11,23 +12,14 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
   const { fallbackMode = false } = options;
 
   const intro = fallbackMode
-    ? `Click below to open a <strong>_snaps</strong> folder.`
-    : `Click below to open a <strong>_snaps</strong> folder.
+    ? `Click below to open a snapshot folder.`
+    : `Click below to open a snapshot folder.
        Your folders will be remembered for next time.`;
 
   const fallbackNote = fallbackMode
-    ? `<div style="margin-top:24px;font-size:0.78rem;color:var(--text-dim);max-width:500px;line-height:1.55;">
-         <p style="text-align:left; max-width:100%;">
-           <strong>Browser compatibility note:</strong>
-           Several SnapViewer features are not available in your browser.
-           Switch to Chrome or Edge to enable these features:         
-         </p>
-         <ul style="text-align:left;">
-           <li>Point to the _snaps folders for multiple packages and easily toggle between them.</li>
-           <li>Remember all previously accessed _snaps folders across browsing sessions.</li>
-           <li>Add newly created snapshot files to the directory list without reopening the _snaps folder.</li>
-         </ul>
-       </div>`
+    ? `<div id="fallback-target" class="splash-info-target">
+         <i class="bi bi-exclamation-circle"></i> Browser compatibility note
+       </div>`    
     : '';
 
   dom.contentBody.innerHTML = `
@@ -35,11 +27,16 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
       <div class="big-icon">📁</div>
       <h2>Welcome to SnapViewer</h2>
       <p>${intro}</p>
-      <button id="open-btn">Open _snaps folder</button>
+      <button id="open-btn">Open snapshot folder</button>
+      <div id="snaps-help-target" class="splash-info-target">
+        <i class="bi bi-info-circle"></i> What is a snapshot folder?
+      </div>
       ${fallbackNote}
     </div>`;
 
   $('open-btn').addEventListener('click', onOpenSnaps);
+  addListenersForTooltipTarget('snaps-help-target', 'snaps-help-tooltip');
+  addListenersForTooltipTarget('fallback-target',   'fallback-tooltip');
   renderDropdown([], null);
 }
 
@@ -52,15 +49,19 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
     <div class="welcome">
       <div class="big-icon">📁</div>
       <h2>Welcome back</h2>
-      <p>Click below to reopen <strong>${escHtml(display)}</strong>,
+      <p>Click below to reopen <strong>${escHtml(display)}</strong> snapshots,
          or use the folder menu in the title bar to switch folders.</p>
-      <button id="open-btn">Open ${escHtml(display)}</button>
+      <button id="open-btn">Open ${escHtml(display)} snapshots</button>
       <p style="margin-top:10px">
-        <a id="pick-new" href="#">Open a different _snaps folder…</a>
+        <a id="pick-new" href="#">Open a different snapshot folder…</a>
       </p>
-    </div>`;
+      <div id="snaps-help-target" class="splash-info-target">
+        <i class="bi bi-info-circle"></i> What is a snapshot folder?
+      </div>
+   </div>`;
   $('open-btn').addEventListener('click', onActivateMostRecent);
   $('pick-new').addEventListener('click', e => { e.preventDefault(); onOpenSnaps(); });
+  addListenersForTooltipTarget('snaps-help-target', 'snaps-help-tooltip');
   renderDropdown(allRecords, null);
 }
 
