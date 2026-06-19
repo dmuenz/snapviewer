@@ -17,7 +17,7 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
        Your folders will be remembered for next time.`;
 
   const fallbackNote = fallbackMode
-    ? `<div id="fallback-target" class="splash-info-target">
+    ? `<div id="fallback-target" class="tooltip-target">
          <i class="bi bi-exclamation-circle"></i> Browser compatibility note
        </div>`    
     : '';
@@ -28,7 +28,7 @@ export function showSplash(onOpenSnaps, renderDropdown, options = {}) {
       <h2>Welcome to SnapViewer</h2>
       <p>${intro}</p>
       <button id="open-btn">Open snapshot folder</button>
-      <div id="snaps-help-target" class="splash-info-target">
+      <div id="snaps-help-target" class="tooltip-target">
         <i class="bi bi-info-circle"></i> What is a snapshot folder?
       </div>
       ${fallbackNote}
@@ -55,7 +55,7 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
       <p style="margin-top:10px">
         <a id="pick-new" href="#">Open a different snapshot folder…</a>
       </p>
-      <div id="snaps-help-target" class="splash-info-target">
+      <div id="snaps-help-target" class="tooltip-target">
         <i class="bi bi-info-circle"></i> What is a snapshot folder?
       </div>
    </div>`;

@@ -837,16 +837,18 @@ html, body {
 
 /* ── Info tooltip ─────────────────────────────────────────────── */
 
-/* Splash help target */
-.splash-info-target {
+.tooltip-target {
   display: inline-block;
-  margin-top: 12px;
   border-bottom: 1px dashed;
   cursor: help;
   line-height: 1;
+}
+#snaps-help-target {
+  margin-top: 12px;
   font-size: 0.85em;
 }
 #fallback-target {
+  margin-top: 12px;
   font-size: 0.8em;
   color: var(--text-dim);
 }
