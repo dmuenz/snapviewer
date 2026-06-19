@@ -15,33 +15,35 @@ export function addListenersForTooltipTarget(targetID, tooltipID) {
 
 let hideTimer = null;
 
-function showInfoTooltip(e, domEl) {
-  if (!domEl) return;
+function showInfoTooltip(e, tooltip) {
+  if (!tooltip) return;
   clearTimeout(hideTimer);
-  positionInfoTooltip(e, domEl);
-  domEl.classList.add('visible');
+  positionInfoTooltip(e, tooltip);
+  tooltip.classList.add('visible');
 }
 
-function hideInfoTooltip(domEl) {
-  if (!domEl) return;
+// Hide tooltip with a short delay to prevent flicker.
+function hideInfoTooltip(tooltip) {
+  if (!tooltip) return;
   hideTimer = setTimeout(() => {
-    domEl.classList.remove('visible');
+    tooltip.classList.remove('visible');
   }, 60);
 }
 
-function positionInfoTooltip(e, domEl) {
-  if (!domEl) return;
+// Position tooltip with viewport-edge avoidance.
+function positionInfoTooltip(e, tooltip) {
+  if (!tooltip) return;
 
   const pad = 14;
-  const tw = domEl.offsetWidth || 360;
-  const th = domEl.offsetHeight || 160;
+  const tw = tooltip.offsetWidth  || 360;
+  const th = tooltip.offsetHeight || 160;
 
   let x = e.clientX + pad;
   let y = e.clientY + pad;
 
-  if (x + tw > window.innerWidth - 8) x = e.clientX - tw - pad;
+  if (x + tw > window.innerWidth  - 8) x = e.clientX - tw - pad;
   if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
 
-  domEl.style.left = `${x}px`;
-  domEl.style.top = `${y}px`;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top  = y + 'px';
 }

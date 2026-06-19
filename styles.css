@@ -842,7 +842,7 @@ html, body {
   border-bottom: 1px dashed;
   cursor: help;
   line-height: 1;
-  font-size: 0.9em;
+  font-size: 0.85em;
 }
 #fallback-target {
   font-size: 0.8em;
