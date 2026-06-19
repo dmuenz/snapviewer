@@ -7,29 +7,29 @@ export function addListenersForTooltipTarget(targetID, tooltipID) {
   const target = $(targetID);
   const tooltip = $(tooltipID);
   if (target) {
-    target.addEventListener('mouseenter', e => { showSplashInfoTooltip(e, tooltip); } );
-    target.addEventListener('mouseleave', () => { hideSplashInfoTooltip(tooltip); });
-    target.addEventListener('mousemove',  e => { positionSplashInfoTooltip(e, tooltip); });
+    target.addEventListener('mouseenter', e  => { showInfoTooltip(e, tooltip); } );
+    target.addEventListener('mouseleave', () => { hideInfoTooltip(tooltip); });
+    target.addEventListener('mousemove',  e  => { positionInfoTooltip(e, tooltip); });
   }
 }
 
 let hideTimer = null;
 
-function showSplashInfoTooltip(e, domEl) {
+function showInfoTooltip(e, domEl) {
   if (!domEl) return;
   clearTimeout(hideTimer);
-  positionSplashInfoTooltip(e, domEl);
+  positionInfoTooltip(e, domEl);
   domEl.classList.add('visible');
 }
 
-function hideSplashInfoTooltip(domEl) {
+function hideInfoTooltip(domEl) {
   if (!domEl) return;
   hideTimer = setTimeout(() => {
     domEl.classList.remove('visible');
   }, 60);
 }
 
-function positionSplashInfoTooltip(e, domEl) {
+function positionInfoTooltip(e, domEl) {
   if (!domEl) return;
 
   const pad = 14;
