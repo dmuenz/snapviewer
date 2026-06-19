@@ -6,28 +6,66 @@ import { $ } from './dom.js';
 export function addListenersForTooltipTarget(targetID, tooltipID) {
   const target = $(targetID);
   const tooltip = $(tooltipID);
-  if (target) {
-    target.addEventListener('mouseenter', e  => { showInfoTooltip(e, tooltip); } );
-    target.addEventListener('mouseleave', () => { hideInfoTooltip(tooltip); });
-    target.addEventListener('mousemove',  e  => { positionInfoTooltip(e, tooltip); });
+  if (!target || !tooltip) return;
+
+  target.addEventListener('mouseenter', e  => { showInfoTooltip(e, tooltip); } );
+  target.addEventListener('mouseleave', () => { hideInfoTooltip(tooltip); });
+  target.addEventListener('mousemove',  e  => { positionInfoTooltip(e, tooltip); });
+}
+
+// Track hide-timer per tooltip element (instead of one global timer).
+const hideTimers = new WeakMap();
+
+// Track currently visible tooltip so only one can be visible at a time.
+let activeTooltip = null;
+
+// Cancel any pending delayed-hide timeout for a specific tooltip.
+function clearHideTimer(tooltip) {
+  const t = hideTimers.get(tooltip);
+  if (t) {
+    clearTimeout(t);
+    hideTimers.delete(tooltip);
   }
 }
 
-let hideTimer = null;
+// Immediately hide a tooltip and clear its timer/active state.
+function hideNow(tooltip) {
+  if (!tooltip) return;
+  clearHideTimer(tooltip);
+  tooltip.classList.remove('visible');
+  if (activeTooltip === tooltip) activeTooltip = null;
+}
 
+// Show a tooltip at cursor position, ensuring no other tooltip remains visible.
 function showInfoTooltip(e, tooltip) {
   if (!tooltip) return;
-  clearTimeout(hideTimer);
+
+  // Cancel pending hide for this tooltip.
+  clearHideTimer(tooltip);
+
+  // Immediately hide previously active tooltip.
+  if (activeTooltip && activeTooltip !== tooltip) {
+    hideNow(activeTooltip);
+  }
+  
   positionInfoTooltip(e, tooltip);
   tooltip.classList.add('visible');
+  activeTooltip = tooltip;
 }
 
 // Hide tooltip with a short delay to prevent flicker.
 function hideInfoTooltip(tooltip) {
   if (!tooltip) return;
-  hideTimer = setTimeout(() => {
+
+  clearHideTimer(tooltip);
+
+  const t = setTimeout(() => {
     tooltip.classList.remove('visible');
+    hideTimers.delete(tooltip);
+    if (activeTooltip === tooltip) activeTooltip = null;
   }, 60);
+
+  hideTimers.set(tooltip, t);
 }
 
 // Position tooltip with viewport-edge avoidance.
