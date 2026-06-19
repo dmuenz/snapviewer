@@ -835,6 +835,8 @@ html, body {
 .welcome a { font-size: 0.8rem; color: var(--text-dim); text-decoration: underline; }
 .welcome a:hover { color: var(--text); }
 
+/* ── Info tooltip ─────────────────────────────────────────────── */
+
 /* Splash help target */
 .splash-info-target {
   display: inline-block;
@@ -849,7 +851,7 @@ html, body {
   color: var(--text-dim);
 }
 
-.splash-info-tooltip {
+.info-tooltip {
   position: fixed;
   z-index: 1001;
   pointer-events: none;
@@ -858,34 +860,35 @@ html, body {
   gap: 6px;
   padding: 10px 12px;
   background: #1e2235;
-  border: 1px solid var(--border);
+  border: 1px solid #646986;
   border-radius: var(--radius);
+  box-shadow: 0 0 12px #1e2235;
   max-width: 460px;
-  color: var(--text-dim);
 }
-.splash-info-tooltip.visible {
+.info-tooltip.visible {
   display: flex;
 }
-.splash-info-tooltip .tt-name {
+.info-tooltip .tt-name {
   font-size: 0.82rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-bright);
 }
 
-.splash-info-tooltip .tt-row {
+.info-tooltip .tt-row {
   font-size: 0.82rem;
-  display:block;
-  line-height:1.5;
+  display: block;
+  line-height: 1.5;
+  color: var(--text);
 }
-.splash-info-tooltip .tt-row code {
+.info-tooltip .tt-row code {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
 }
-.splash-info-tooltip .tt-row ul { 
+.info-tooltip .tt-row ul { 
   margin:6px 0 0 16px;
 }
-.splash-info-tooltip .tt-row ul + p {
+.info-tooltip .tt-row ul + p {
   margin-top: 6px;
 }
 
