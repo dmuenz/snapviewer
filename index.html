@@ -156,9 +156,9 @@
 </div>
 
 <!-- ── Snapshot folder tooltip ───────────────────────────────────── -->
-<div id="snaps-help-tooltip" class="snaps-help-tooltip">
+<div id="snaps-help-tooltip" class="splash-info-tooltip">
   <div class="tt-name">What is a snapshot folder?</div>
-  <div class="tt-row" style="display:block; line-height:1.5;">
+  <div class="tt-row">
     It's a folder named <code>_snaps</code> created by testthat.<br>
     It contains snapshot files – markdown and images.<br>
     In an R package, the path is:
@@ -167,7 +167,7 @@
     </div>
     <div style="margin-top:6px;">
       <p>You can select any of the following:</p>
-      <ul style="margin:6px 0 0 16px;">
+      <ul>
         <li>the package root folder (best option),</li>
         <li><code>tests</code>,</li>
         <li><code>tests/testthat</code>,</li>
@@ -175,6 +175,20 @@
       </ul>
       <p>Whichever you pick, SnapViewer will find <code>_snaps</code>.</p>
     </div>
+  </div>
+</div>
+
+<!-- ── Fallback-mode tooltip ─────────────────────────────────────── -->
+<div id="fallback-tooltip" class="splash-info-tooltip">
+  <div class="tt-name">Browser compatibility note</div>
+  <div class="tt-row">
+    Several SnapViewer features are not available in your browser.
+    Switch to Chrome or Edge to enable these features:         
+    <ul>
+      <li>Point to the snapshot folders for multiple packages and easily toggle between them.</li>
+      <li>Remember all previously accessed snapshot folders across browsing sessions.</li>
+      <li>Add newly created snapshot files to the directory list without re-selecting the snapshot folder.</li>
+    </ul>
   </div>
 </div>
 
