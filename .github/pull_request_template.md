@@ -1,12 +1,7 @@
 ## Summary
 <!-- Describe what this PR changes and why -->
 
-## Testing performed
-
-### Preview link
-- Cloudflare Preview URL: <!-- paste URL -->
-
-### Checks
+## Checks
 - [ ] App loads and is interactive
 - [ ] Open `_snaps` folder works
 - [ ] Tree navigation works (mouse + keyboard)
