@@ -82,7 +82,7 @@ export async function previewFile(fileRef) {
     
       const renderRaw = () => {
         const out = document.createElement('pre');
-        out.id = 'markdown-output';
+        out.id = 'text-output';
         out.className = 'markdown-raw';
         out.textContent = text;
     
