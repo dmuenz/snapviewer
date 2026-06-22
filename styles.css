@@ -894,6 +894,62 @@ html, body {
   margin-top: 6px;
 }
 
+/* ── Markdown output ──────────────────────────────────────────── */
+
+/* Markdown / text preview styling */
+#markdown-output {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  padding: 0.25rem 0;
+}
+
+/* Rhythm */
+#markdown-output > *:first-child {
+  margin-top: 0;
+}
+#markdown-output > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings */
+#markdown-output h1 {
+  line-height: 1.25;
+  margin: 1.2em 0 0.55em;
+  font-weight: 650;
+  color: var(--text-bright);
+  font-size: 1.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Code blocks */
+#markdown-output pre {
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.8rem 0.95rem;
+  margin: 0.9em 0 1em;
+  overflow: auto;
+  color: var(--text);
+}
+#markdown-output pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+/* Horizontal rule */
+#markdown-output hr {
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.2em 0;
+}
+
 /* ── Plain-text display ───────────────────────────────────────── */
 #text-output {
   font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;

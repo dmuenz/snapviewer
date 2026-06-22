@@ -53,11 +53,27 @@ export async function previewFile(fileRef) {
 
     // Markdown/text file preview.
     if (EXT_MD.has(ext)) {
-      const pre = document.createElement('div');
-      pre.id = 'text-output';
-      pre.textContent = await file.text();
+      const out = document.createElement('div');
+      out.id = 'markdown-output';
+
+      const text = await file.text();
+
+      // Render markdown if parser exists, else fallback to plain text.
+      if (window.marked && typeof window.marked.parse === 'function') {
+        const rendered = window.marked.parse(text);
+
+        // Sanitize rendered HTML if sanitizer exists; otherwise safe fallback to plain text.
+        if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+          out.innerHTML = window.DOMPurify.sanitize(rendered);
+        } else {
+          out.textContent = text;
+        }
+      } else {
+        out.textContent = text;
+      }
+
       dom.contentBody.innerHTML = '';
-      dom.contentBody.appendChild(pre);
+      dom.contentBody.appendChild(out);
 
     // Image preview (including SVG object rendering).
     } else if (EXT_IMG.has(ext)) {
