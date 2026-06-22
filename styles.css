@@ -779,10 +779,10 @@ html, body {
   flex:1;
 }
 
-#img-toolbar { display: none; align-items: center; gap: 6px; flex-shrink: 0; }
-#img-toolbar.visible { display: flex; }
+.content-tb { display: none; align-items: center; gap: 6px; flex-shrink: 0; }
+.content-tb.visible { display: flex; }
 
-.img-tb-btn {
+.content-tb-btn {
   padding: 3px 10px;
   border-radius: 5px;
   border: 1px solid var(--border);
@@ -794,8 +794,8 @@ html, body {
   transition: background 0.15s, border-color 0.15s, color 0.15s;
   white-space: nowrap;
 }
-.img-tb-btn:hover  { background: var(--hover); border-color: var(--accent); color: var(--text-bright); }
-.img-tb-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--text-bright); }
+.content-tb-btn:hover  { background: var(--hover); border-color: var(--accent); color: var(--text-bright); }
+.content-tb-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--text-bright); }
 
 #content-body {
   flex: 1;

@@ -83,4 +83,5 @@ function resetContentHeader(message) {
   dom.dateBadge.style.display = 'none';
   dom.dateBadge.textContent   = '';
   dom.imgToolbar.classList.remove('visible');
+  dom.mdToolbar.classList.remove('visible');
 }
