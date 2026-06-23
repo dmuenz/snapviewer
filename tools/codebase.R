@@ -8,8 +8,9 @@ setwd("..")
 
 cat_glue <- function(...) cat(glue::glue(...), "\n", sep = "")
 
-# all code files
-files <- fs::dir_ls(regexp = "\\.(|md|css|js)$", recurse = TRUE)
+# all code files, with top-level files first
+files <- fs::dir_ls(regexp = "\\.(md|css|js)$", recurse = TRUE)
+files <- files[order(grepl("/", files, fixed = TRUE))]
 
 # text file in which to print directory tree and file contents
 output_filename <- fs::path(this.path::this.dir(), "codebase.txt")
@@ -20,7 +21,7 @@ sink(output_file, type = "output")
 
 # print directory tree, including only relevant files
 cat("Here is a list of all the relevant file names:\n")
-fs::dir_tree(regexp = "\\.(|md|css|js)$")
+fs::dir_tree(regexp = "\\.(md|css|js)$")
 
 # print file contents
 cat("\nAnd here are all the file contents:\n")
