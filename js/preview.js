@@ -4,6 +4,7 @@ import { state, EXT_MD, EXT_IMG } from './state.js';
 import { dom, $ } from './dom.js';
 import { extOf, escHtml, formatDate } from './helpers.js';
 import { updateZoomButtons } from './zoom.js';
+import { bindMdRenderers, updateMdButtons, applyMdMode } from './mdMode.js';
 
 // Resolve a File object from either source mode.
 async function resolveFile(fileRef) {
@@ -29,6 +30,8 @@ async function resolveFile(fileRef) {
 export async function previewFile(fileRef) {
   dom.breadcrumb.textContent = fileRef?.name || 'File';
   dom.imgToolbar.classList.remove('visible');
+  dom.mdToolbar.classList.remove('visible');
+  bindMdRenderers(null, null);
 
   // Reset date badge until file metadata is loaded.
   dom.dateBadge.style.display = 'none';
@@ -53,27 +56,44 @@ export async function previewFile(fileRef) {
 
     // Markdown/text file preview.
     if (EXT_MD.has(ext)) {
-      const out = document.createElement('div');
-      out.id = 'markdown-output';
-
       const text = await file.text();
 
-      // Render markdown if parser exists, else fallback to plain text.
-      if (window.marked && typeof window.marked.parse === 'function') {
-        const rendered = window.marked.parse(text);
+      const renderVisual = () => {
+        const out = document.createElement('div');
+        out.id = 'markdown-output';
+    
+        // Render markdown if parser exists, else fallback to plain text.
+        if (window.marked && typeof window.marked.parse === 'function') {
+          const rendered = window.marked.parse(text);
 
-        // Sanitize rendered HTML if sanitizer exists; otherwise safe fallback to plain text.
-        if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
-          out.innerHTML = window.DOMPurify.sanitize(rendered);
+          // Sanitize rendered HTML if sanitizer exists; otherwise safe fallback to plain text.
+          if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+            out.innerHTML = window.DOMPurify.sanitize(rendered);
+          } else {
+            out.textContent = text;
+          }
         } else {
           out.textContent = text;
         }
-      } else {
+    
+        dom.contentBody.innerHTML = '';
+        dom.contentBody.appendChild(out);
+      };
+    
+      const renderRaw = () => {
+        const out = document.createElement('pre');
+        out.id = 'text-output';
+        out.className = 'markdown-raw';
         out.textContent = text;
-      }
-
-      dom.contentBody.innerHTML = '';
-      dom.contentBody.appendChild(out);
+    
+        dom.contentBody.innerHTML = '';
+        dom.contentBody.appendChild(out);
+      };
+    
+      bindMdRenderers(renderVisual, renderRaw);
+      dom.mdToolbar.classList.add('visible');
+      updateMdButtons();  // reflect persisted state
+      applyMdMode();      // render according to state.currentMdMode (default rendered)
 
     // Image preview (including SVG object rendering).
     } else if (EXT_IMG.has(ext)) {

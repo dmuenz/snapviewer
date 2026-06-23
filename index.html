@@ -27,11 +27,11 @@
   <!-- ── Sidebar ─────────────────────────────────────────────────── -->
   <nav id="sidebar">
     <div id="sidebar-toolbar">
-      <div class="sort-segment" role="group" aria-label="Sort files">
-        <button class="sort-seg-btn active" id="btn-sort-alpha" aria-pressed="true" title="Sort alphabetically">
+      <div class="segmented-tb-btns visible" role="group" aria-label="Sort files">
+        <button class="seg-tb-btn active" id="btn-sort-alpha" aria-pressed="true" title="Sort alphabetically">
           <span class="btn-icon"><i class="bi bi-arrows-vertical"></i></span> A–Z
         </button>
-        <button class="sort-seg-btn" id="btn-sort-recent" aria-pressed="false" title="Sort by recent">
+        <button class="seg-tb-btn" id="btn-sort-recent" aria-pressed="false" title="Sort by recent">
           <span class="btn-icon"><i class="bi bi-arrows-vertical"></i></span> Recent
         </button>
       </div>
@@ -68,10 +68,14 @@
     <div id="content-header">
       <span id="breadcrumb-text" class="breadcrumb">Open a snapshot folder to get started</span>
 	    <span id="file-date-badge" class="file-date"></span>
-      <div id="img-toolbar">
-        <button class="img-tb-btn active" id="zoom-fit-width">Fit to width</button>
-        <button class="img-tb-btn"        id="zoom-fit-height">Fit to height</button>
-        <button class="img-tb-btn"        id="zoom-full">Full size</button>
+      <div id="img-toolbar" class="segmented-tb-btns">
+        <button class="seg-tb-btn active" id="zoom-fit-width">Fit to width</button>
+        <button class="seg-tb-btn"        id="zoom-fit-height">Fit to height</button>
+        <button class="seg-tb-btn"        id="zoom-full">Full size</button>
+      </div>
+      <div id="md-toolbar" class="segmented-tb-btns">
+        <button class="seg-tb-btn active" id="md-visual">Visual</button>
+        <button class="seg-tb-btn"        id="md-raw">Raw</button>
       </div>
     </div>
     <div id="content-body"></div>

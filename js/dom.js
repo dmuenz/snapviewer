@@ -16,6 +16,7 @@ export const dom = {
   breadcrumb: $('breadcrumb-text'),
   dateBadge: $('file-date-badge'),
   imgToolbar: $('img-toolbar'),
+  mdToolbar: $('md-toolbar'),
   appEl: $('app'),
   pathBtn: $('path-btn'),
   pathText: $('path-text'),

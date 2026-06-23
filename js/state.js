@@ -27,6 +27,7 @@ export const state = {
   filterText: '',
   activeRow: null,
   currentZoom: 'zoom-fit-width',
+  currentMdMode: 'visual',
   currentMedia: null,
   treeGeneration: 0,
   openPaths: new Set()
