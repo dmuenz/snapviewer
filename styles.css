@@ -992,7 +992,6 @@ html, body {
 #img-output .img-stage > object.zoom-fit-height {
   width: auto;
   height: calc(100vh - var(--header-h) - var(--content-header-h) - 2 * var(--content-pad-tb) - 10px);
-  /* height: 100vh; */
 }
 
 /* full size mode */
