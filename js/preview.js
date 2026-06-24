@@ -99,23 +99,23 @@ export async function previewFile(fileRef) {
     } else if (EXT_IMG.has(ext)) {
       const url = URL.createObjectURL(file);
       state.currentMedia = { objectUrl: url };
-      dom.contentBody.innerHTML = '<div id="img-output"></div>';
+      dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
       dom.imgToolbar.classList.add('visible');
       updateZoomButtons();
 
+      let el;
       if (ext === 'svg') {
-        const obj = document.createElement('object');
-        obj.type = 'image/svg+xml';
-        obj.data = url;
-        obj.className = state.currentZoom;
-        $('img-output').appendChild(obj);
+        el = document.createElement('object');
+        el.type = 'image/svg+xml';
+        el.data = url;
       } else {
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = fileRef.name;
-        img.className = state.currentZoom;
-        $('img-output').appendChild(img);
+        el = document.createElement('img');
+        el.src = url;
+        el.alt = fileRef.name;
       }
+
+    el.className = state.currentZoom;
+    $('img-stage').appendChild(el);
 
     // Fallback: display as plain text.
     } else {
