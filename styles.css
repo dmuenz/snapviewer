@@ -575,6 +575,19 @@ html, body {
 
 /* ── Toolbar segmented buttons ────────────────────────────────── */
 
+.content-toolbar:not(.visible) {
+  display: none; 
+}
+
+.content-toolbar.visible {
+  display: inline-flex;
+  overflow: hidden;
+  background: transparent;
+  height: 100%;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
 .segmented-tb-btns:not(.visible) {
   display: none; 
 }
@@ -586,6 +599,7 @@ html, body {
   overflow: hidden;
   background: transparent;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .seg-tb-btn {
@@ -769,17 +783,16 @@ html, body {
 .breadcrumb {
   color: var(--text);
   font-weight: 500;
-  flex-shrink: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 0.82rem;
+  flex: 0 1 auto;
 }
 .file-date {
   font-size:0.74rem;
   color:var(--text-dim);
   white-space:nowrap;
-  flex-shrink:0;
   overflow: hidden;
   text-overflow: ellipsis;
   display:none;
@@ -999,6 +1012,14 @@ html, body {
 #img-output .img-stage > object.zoom-full {
   width: auto;
   height: auto;
+}
+
+/* custom Prism styling */
+pre[class*="language-"],
+code[class*="language-"] {
+  background: transparent;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
 }
 
 * {

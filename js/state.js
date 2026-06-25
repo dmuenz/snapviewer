@@ -26,8 +26,9 @@ export const state = {
   sortMode: 'alpha',
   filterText: '',
   activeRow: null,
-  currentZoom: 'zoom-fit-width',
   currentMdMode: 'visual',
+  currentSvgMode: 'visual',
+  currentZoom: 'zoom-fit-width',
   currentMedia: null,
   treeGeneration: 0,
   openPaths: new Set()

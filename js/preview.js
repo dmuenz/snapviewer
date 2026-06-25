@@ -3,8 +3,9 @@
 import { state, EXT_MD, EXT_IMG } from './state.js';
 import { dom, $ } from './dom.js';
 import { extOf, escHtml, formatDate } from './helpers.js';
-import { updateZoomButtons } from './zoom.js';
 import { bindMdRenderers, updateMdButtons, applyMdMode } from './mdMode.js';
+import { bindSvgRenderers, updateSvgButtons, applySvgMode } from './svgMode.js';
+import { updateZoomButtons } from './zoom.js';
 
 // Resolve a File object from either source mode.
 async function resolveFile(fileRef) {
@@ -32,6 +33,7 @@ export async function previewFile(fileRef) {
   dom.imgToolbar.classList.remove('visible');
   dom.mdToolbar.classList.remove('visible');
   bindMdRenderers(null, null);
+  bindSvgRenderers(null, null);
 
   // Reset date badge until file metadata is loaded.
   dom.dateBadge.style.display = 'none';
@@ -95,27 +97,81 @@ export async function previewFile(fileRef) {
       updateMdButtons();  // reflect persisted state
       applyMdMode();      // render according to state.currentMdMode (default rendered)
 
-    // Image preview (including SVG object rendering).
+    // SVG preview.
+    } else if (ext === 'svg') {
+      const text = await file.text();
+
+      const renderVisual = () => {
+        // Revoke prior URL from previous visual render of this same file mode switch.
+        if (state.currentMedia?.objectUrl) {
+          URL.revokeObjectURL(state.currentMedia.objectUrl);
+          state.currentMedia = null;
+        }
+
+        const url = URL.createObjectURL(file);
+        state.currentMedia = { objectUrl: url };
+
+        dom.imgToolbar.classList.add('visible');
+        dom.svgModeBtns.classList.add('visible');
+        dom.imgZoomBtns.classList.add('visible');
+        updateZoomButtons();
+
+        dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
+
+        const obj = document.createElement('object');
+        obj.data = url;
+        obj.type = 'image/svg+xml';
+        obj.className = state.currentZoom;
+        $('img-stage').appendChild(obj);
+      };
+
+      const renderRaw = () => {
+        dom.imgToolbar.classList.add('visible');
+        dom.svgModeBtns.classList.add('visible');
+        dom.imgZoomBtns.classList.remove('visible'); // In raw mode, hide zoom toolbar.
+
+        // Revoke visual URL when leaving visual mode.
+        if (state.currentMedia?.objectUrl) {
+          URL.revokeObjectURL(state.currentMedia.objectUrl);
+          state.currentMedia = null;
+        }
+
+        const pre = document.createElement('pre');
+        pre.id = 'text-output';
+
+        const code = document.createElement('code');
+        code.className = 'language-markup';
+        code.textContent = text;
+
+        pre.appendChild(code);
+        dom.contentBody.innerHTML = '';
+        dom.contentBody.appendChild(pre);
+
+        // Optional syntax highlighting if Prism is available.
+        if (window.Prism && typeof window.Prism.highlightElement === 'function') {
+          window.Prism.highlightElement(code);
+        }
+      };
+
+      bindSvgRenderers(renderVisual, renderRaw);
+      updateSvgButtons();
+      applySvgMode();
+
+    // Other image preview.
     } else if (EXT_IMG.has(ext)) {
       const url = URL.createObjectURL(file);
       state.currentMedia = { objectUrl: url };
       dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
       dom.imgToolbar.classList.add('visible');
+      dom.svgModeBtns.classList.remove('visible');
+      dom.imgZoomBtns.classList.add('visible');
       updateZoomButtons();
 
-      let el;
-      if (ext === 'svg') {
-        el = document.createElement('object');
-        el.type = 'image/svg+xml';
-        el.data = url;
-      } else {
-        el = document.createElement('img');
-        el.src = url;
-        el.alt = fileRef.name;
-      }
-
-    el.className = state.currentZoom;
-    $('img-stage').appendChild(el);
+      const el = document.createElement('img');
+      el.src = url;
+      el.alt = fileRef.name;
+      el.className = state.currentZoom;
+      $('img-stage').appendChild(el);
 
     // Fallback: display as plain text.
     } else {
