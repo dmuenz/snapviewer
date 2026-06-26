@@ -24,6 +24,7 @@
   --content-header-h: 38px;
   --content-pad-tb: 28px;
   --content-pad-lr: 36px;
+  --monospace: 'Cascadia Code', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 }
 
 html, body {
@@ -615,7 +616,7 @@ html, body {
 }
 
 .seg-tb-btn + .seg-tb-btn {
-  border-left: 1px solid var(--border); /* dividing line */
+  border-left: 1px solid var(--border-bright); /* dividing line */
 }
 
 .seg-tb-btn:hover {
@@ -941,7 +942,7 @@ html, body {
   color: var(--text);
 }
 #markdown-output pre code {
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', ui-monospace, monospace;
+  font-family: var(--monospace);
   font-size: 0.86rem;
   background: transparent;
   border: 0;
@@ -960,7 +961,7 @@ html, body {
 
 /* ── Plain-text display ───────────────────────────────────────── */
 #text-output {
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', ui-monospace, monospace;
+  font-family: var(--monospace);
   font-size: 0.86rem;
   line-height: 1.5;
   color: var(--text);
@@ -1018,6 +1019,7 @@ html, body {
 pre[class*="language-"],
 code[class*="language-"] {
   background: transparent;
+  font-family: var(--monospace);
   white-space: pre-wrap !important;
   word-break: break-word !important;
 }
