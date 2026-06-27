@@ -211,6 +211,9 @@ html, body {
   outline: none;
   margin-bottom: 2px;
 }
+.dd-label-input.invalid {
+  border-color: var(--danger);
+}
 
 .dd-item-actions {
   display: flex;
@@ -303,7 +306,7 @@ html, body {
 }
 #modal-input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 12px; 
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg);
@@ -313,6 +316,13 @@ html, body {
   transition: border-color 0.15s;
 }
 #modal-input:focus { border-color: var(--accent); }
+
+#modal-nickname-error {
+  margin-top: -6px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  padding: 0;
+}
 
 .modal-hint {
   font-size: 0.75rem;

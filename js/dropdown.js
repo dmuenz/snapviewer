@@ -105,6 +105,10 @@ function makeDropdownItem(rec, activeId, actions) {
     input.placeholder = rec.handle.name;
     input.maxLength = 48;
 
+    // prevent row activation when interacting with rename input
+    input.addEventListener('click', e => e.stopPropagation());
+    input.addEventListener('mousedown', e => e.stopPropagation());
+
     labelRow.replaceWith(input);
     input.focus();
     input.select();
@@ -124,15 +128,35 @@ function makeDropdownItem(rec, activeId, actions) {
     actionsEl.appendChild(cancelBtn);
 
     const commit = async () => {
-      rec.label = input.value.trim();
+      const candidate = input.value.trim();
+    
+      // Pull latest records before validating.
+      const all = await dbGetAll();
+    
+      // Enforce unique non-empty nickname (case-insensitive).
+      if (candidate && nicknameExists(candidate, all, rec.id)) {
+        input.classList.add('invalid');
+        input.setCustomValidity('That nickname already exists.');
+        input.reportValidity();
+        input.focus();
+        input.select();
+        return;
+      }
+    
+      input.classList.remove('invalid');
+      input.setCustomValidity('');
+    
+      rec.label = candidate;
       await dbPut(rec);
+    
       if (rec.id === state.currentRecId) {
         dom.pathText.textContent = displayName(rec);
       }
+    
       const updated = await dbGetAll();
       renderDropdown(updated, state.currentRecId, actions);
     };
-
+    
     const cancel = async () => {
       const updated = await dbGetAll();
       renderDropdown(updated, state.currentRecId, actions);
@@ -143,6 +167,10 @@ function makeDropdownItem(rec, activeId, actions) {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter')  { e.preventDefault(); commit(); }
       if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+    });
+    input.addEventListener('input', () => {
+      input.classList.remove('invalid');
+      input.setCustomValidity('');
     });
   });
 
@@ -199,4 +227,14 @@ function makeDropdownItem(rec, activeId, actions) {
   item.appendChild(body);
   item.appendChild(actionsEl);
   return item;
+}
+
+function normalizeNickname(s) {
+  return (s || '').trim().toLowerCase();
+}
+
+function nicknameExists(candidate, records, excludeId = null) {
+  const c = normalizeNickname(candidate);
+  if (!c) return false;
+  return records.some(r => r.id !== excludeId && normalizeNickname(r.label) === c);
 }

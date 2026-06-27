@@ -2,7 +2,7 @@
 
 import { state, SNAPS_DIR } from './state.js';
 import { dom, $ } from './dom.js';
-import { dbGetAll, dbPut, dbSetMeta, upsertHandle } from './db.js';
+import { dbGetAll, dbPut, dbDelete, dbSetMeta, upsertHandle } from './db.js';
 import { escHtml, displayName } from './helpers.js';
 import { rebuildTree } from './tree.js';
 import { pickSnapsViaInput, setFallbackSource } from './fallbackPicker.js';
@@ -12,32 +12,103 @@ export function showError(msg) {
   dom.contentBody.innerHTML = `<div class="err-msg">${escHtml(msg)}</div>`;
 }
 
-// Show nickname modal and resolve with entered label or empty string.
-export function promptNickname(suggestedLabel) {
-  return new Promise(resolve => {
+// Show nickname modal and resolve with entered label.
+// Prevent duplicate nicknames (case-insensitive, trimmed).
+// If saved nickname is empty, auto-generate "_snaps (n)" with smallest unique n.
+// Cancel aborts add-folder flow via AbortError.
+export async function promptNickname(suggestedLabel) {
+  const records = await dbGetAll();
+
+  const normalize = s => (s || '').trim().toLowerCase();
+  const isDuplicate = candidate => {
+    const c = normalize(candidate);
+    if (!c) return false;
+    return records.some(r => normalize(r.label) === c);
+  };
+
+  const generateAutoNickname = () => {
+    const base = '_snaps';
+    let n = 1;
+    while (isDuplicate(`${base} (${n})`)) n += 1;
+    return `${base} (${n})`;
+  };
+
+  let errEl = $('modal-nickname-error');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'modal-nickname-error';
+    errEl.className = 'err-msg';
+    dom.modalInput.insertAdjacentElement('afterend', errEl);
+  }
+
+  return new Promise((resolve, reject) => {
     dom.modalInput.value = suggestedLabel || '';
     dom.modalOverlay.classList.add('open');
+    errEl.textContent = '';
+    dom.modalInput.removeAttribute('aria-invalid');
     dom.modalInput.focus();
     dom.modalInput.select();
 
-    const finish = label => {
+    const cleanup = () => {
       dom.modalOverlay.classList.remove('open');
       $('modal-save').removeEventListener('click', onSave);
-      $('modal-skip').removeEventListener('click', onSkip);
-      dom.modalInput.removeEventListener('keydown', onKey);
+      $('modal-cancel').removeEventListener('click', onCancel);
+      document.removeEventListener('keydown', onKey, true);
+      dom.modalInput.removeEventListener('input', onInput);
+    };
+
+    const finishSave = label => {
+      cleanup();
       resolve(label);
     };
 
-    const onSave = () => finish(dom.modalInput.value.trim());
-    const onSkip = () => finish('');
-    const onKey  = e => {
-      if (e.key === 'Enter')  { e.preventDefault(); finish(dom.modalInput.value.trim()); }
-      if (e.key === 'Escape') { e.preventDefault(); finish(''); }
+    const finishCancel = () => {
+      cleanup();
+      reject(new DOMException('User cancelled nickname entry', 'AbortError'));
+    };
+
+    const showDupError = () => {
+      errEl.textContent = 'That nickname already exists. Choose a different one.';
+      dom.modalInput.setAttribute('aria-invalid', 'true');
+      dom.modalInput.focus();
+      dom.modalInput.select();
+    };
+
+    const clearError = () => {
+      errEl.textContent = '';
+      dom.modalInput.removeAttribute('aria-invalid');
+    };
+
+    const trySave = () => {
+      const raw = dom.modalInput.value.trim();
+      const value = raw === '' ? generateAutoNickname() : raw;
+
+      if (isDuplicate(value)) {
+        showDupError();
+        return;
+      }
+
+      clearError();
+      finishSave(value);
+    };
+
+    const onSave = () => trySave();
+    const onCancel = () => finishCancel();
+    const onKey = e => {
+      if (!dom.modalOverlay.classList.contains('open')) return;
+
+      if (e.key === 'Enter')  { e.preventDefault(); trySave(); }
+      if (e.key === 'Escape') { e.preventDefault(); finishCancel(); }
+    };
+    const onInput = () => {
+      const value = dom.modalInput.value.trim();
+      if (!value || !isDuplicate(value)) clearError();
     };
 
     $('modal-save').addEventListener('click', onSave);
-    $('modal-skip').addEventListener('click', onSkip);
-    dom.modalInput.addEventListener('keydown', onKey);
+    $('modal-cancel').addEventListener('click', onCancel);
+    document.addEventListener('keydown', onKey, true);
+    dom.modalInput.addEventListener('input', onInput);
   });
 }
 
@@ -123,9 +194,18 @@ export async function openSnaps(renderDropdown, showReadySplash) {
     const rec = allRecs.find(r => r.id === id);
 
     if (isNew) {
-      const label = await promptNickname(suggestedNickname);
-      rec.label = label;
-      await dbPut(rec);
+      try {
+        const label = await promptNickname(suggestedNickname);
+        rec.label = label;
+        await dbPut(rec);
+      } catch (e) {
+        // User cancelled nickname entry: remove newly-created record and abort flow.
+        if (e?.name === 'AbortError') {
+          await dbDelete(id);
+          return;
+        }
+        throw e;
+      }
     }
 
     await dbSetMeta('currentId', id);
