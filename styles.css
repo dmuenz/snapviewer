@@ -735,36 +735,28 @@ html, body {
 
 /* ── File tooltip ─────────────────────────────────────────────── */
 #file-tooltip {
-  position: fixed;
-  z-index: 999;
-  pointer-events: none;
-  display: none;
-  flex-direction: column;
   gap: 3px;
   padding: 8px 11px;
-  background: #1e2235;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.55);
+  border: 1px solid var(--border-bright);
   max-width: 400px;
 }
-#file-tooltip.visible { display: flex; }
 
-.tt-name {
+#file-tooltip .tt-name {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-bright);
   word-break: break-all;
 }
-.tt-row {
+#file-tooltip .tt-row {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 0.75rem;
   color: var(--text-dim);
+  line-height: 1.2;
 }
-.tt-row .tt-icon { font-size: 0.8rem; }
-.tt-row .tt-val  { color: var(--text); }
+#file-tooltip .tt-row .tt-icon { font-size: 0.8rem; }
+#file-tooltip .tt-row .tt-val  { color: var(--text); }
 
 /* ── Content ──────────────────────────────────────────────────── */
 #content {
