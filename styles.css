@@ -994,31 +994,27 @@ html, body {
   /* padding: 20px; */
 }
 
-/* image/object baseline */
-#img-output .img-stage > img,
-#img-output .img-stage > object {
+/* image baseline */
+#img-output .img-stage > img {
   display: block;
   box-shadow: 0 0 16px rgb(115 108 161);
   background: #fff;
 }
 
 /* fit-to-width mode */
-#img-output .img-stage > img.zoom-fit-width,
-#img-output .img-stage > object.zoom-fit-width {
+#img-output .img-stage > img.zoom-fit-width {
   width: 100%;
   height: auto;
 }
 
 /* fit-to-height mode */
-#img-output .img-stage > img.zoom-fit-height,
-#img-output .img-stage > object.zoom-fit-height {
+#img-output .img-stage > img.zoom-fit-height {
   width: auto;
   height: calc(100vh - var(--header-h) - var(--content-header-h) - 2 * var(--content-pad-tb) - 10px);
 }
 
 /* full size mode */
-#img-output .img-stage > img.zoom-full,
-#img-output .img-stage > object.zoom-full {
+#img-output .img-stage > img.zoom-full {
   width: auto;
   height: auto;
 }

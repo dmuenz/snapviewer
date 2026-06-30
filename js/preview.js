@@ -118,11 +118,11 @@ export async function previewFile(fileRef) {
 
         dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
 
-        const obj = document.createElement('object');
-        obj.data = url;
-        obj.type = 'image/svg+xml';
-        obj.className = state.currentZoom;
-        $('img-stage').appendChild(obj);
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = fileRef.name || 'SVG preview';
+        img.className = state.currentZoom;
+        $('img-stage').appendChild(img);
       };
 
       const renderRaw = () => {
@@ -161,17 +161,19 @@ export async function previewFile(fileRef) {
     } else if (EXT_IMG.has(ext)) {
       const url = URL.createObjectURL(file);
       state.currentMedia = { objectUrl: url };
-      dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
+
       dom.imgToolbar.classList.add('visible');
       dom.svgModeBtns.classList.remove('visible');
       dom.imgZoomBtns.classList.add('visible');
       updateZoomButtons();
 
-      const el = document.createElement('img');
-      el.src = url;
-      el.alt = fileRef.name;
-      el.className = state.currentZoom;
-      $('img-stage').appendChild(el);
+      dom.contentBody.innerHTML = '<div id="img-output"><div class="img-stage" id="img-stage"></div></div>';
+
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = fileRef.name;
+      img.className = state.currentZoom;
+      $('img-stage').appendChild(img);
 
     // Fallback: display as plain text.
     } else {
