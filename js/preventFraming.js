@@ -25,8 +25,14 @@
       overlay.setAttribute("role", "alertdialog");
       overlay.setAttribute("aria-modal", "true");
 
-      const msg = document.createElement("p");
-      msg.textContent = "SnapViewer cannot be displayed inside another site.";
+      const title = document.createElement("p");
+      title.className = "frame-block-title";
+      title.textContent = "SnapViewer cannot be displayed inside another site.";
+
+      const linkHint = document.createElement("p");
+      linkHint.className = "frame-block-hint";
+      linkHint.textContent = `The link below works best if you middle-click it or
+        right-click and choose "Open link in new tab":`;
 
       const link = document.createElement("a");
       link.href = window.location.href;
@@ -34,8 +40,18 @@
       link.rel = "noopener noreferrer";
       link.textContent = 'Open SnapViewer in a new tab';
 
-      overlay.appendChild(msg);
+      const copyHint = document.createElement("p");
+      copyHint.className = "frame-block-hint";
+      copyHint.textContent = "Or just copy-and-paste the link address:";
+
+      const rawLink = document.createElement("p");
+      rawLink.textContent = window.location.href;
+
+      overlay.appendChild(title);
+      overlay.appendChild(linkHint);
       overlay.appendChild(link);
+      overlay.appendChild(copyHint);
+      overlay.appendChild(rawLink);
 
       // Block background interaction as much as possible.
       document.documentElement.classList.add("frame-blocked");
