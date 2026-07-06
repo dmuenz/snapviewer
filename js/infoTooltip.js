@@ -1,6 +1,7 @@
 // Show/hide/position an info tooltip
 
 import { $ } from './dom.js';
+import { setTooltipVars } from './styleVars.js';
 
 // Add mouse event listeners to show/hide/position a tooltip
 export function addListenersForTooltipTarget(targetID, tooltipID) {
@@ -82,6 +83,7 @@ function positionInfoTooltip(e, tooltip) {
   if (x + tw > window.innerWidth  - 8) x = e.clientX - tw - pad;
   if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
 
-  tooltip.style.left = x + 'px';
-  tooltip.style.top  = y + 'px';
+  // tooltip.style.left = x + 'px';
+  // tooltip.style.top  = y + 'px';
+  setTooltipVars(x, y);
 }

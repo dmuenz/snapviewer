@@ -2,6 +2,7 @@
 
 import { dom } from './dom.js';
 import { formatDate, formatBytes } from './helpers.js';
+import { setTooltipVars } from './styleVars.js';
 
 let ttHideTimer = null;
 
@@ -50,10 +51,14 @@ function positionTooltip(e) {
   const pad = 14;
   const tw  = dom.tooltip.offsetWidth  || 260;
   const th  = dom.tooltip.offsetHeight || 80;
+
   let x = e.clientX + pad;
   let y = e.clientY + pad;
+
   if (x + tw > window.innerWidth  - 8) x = e.clientX - tw - pad;
   if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
-  dom.tooltip.style.left = x + 'px';
-  dom.tooltip.style.top  = y + 'px';
+
+  // dom.tooltip.style.left = x + 'px';
+  // dom.tooltip.style.top  = y + 'px';
+  setTooltipVars(x, y);
 }

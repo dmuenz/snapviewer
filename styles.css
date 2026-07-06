@@ -25,6 +25,8 @@
   --content-pad-tb: 28px;
   --content-pad-lr: 36px;
   --monospace: 'Cascadia Code', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --tt-x: 0px;
+  --tt-y: 0px;
 }
 
 html, body {
@@ -871,6 +873,9 @@ html, body {
 
 .info-tooltip {
   position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(var(--tt-x), var(--tt-y));
   z-index: 1001;
   pointer-events: none;
   display: none;
