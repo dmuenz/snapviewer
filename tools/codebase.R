@@ -39,9 +39,6 @@ chunk_by_nchar <- function(x, max_char, sep = "") {
   y
 }
 
-# regex to match extensions of relevant code files
-include_exts <- "\\.(html|css|js|md)$"
-
 intro <- capture.output({
   # intro text mentioning currently checked out git branch
   cat_glue(
@@ -57,20 +54,21 @@ intro <- capture.output({
 
   # print directory tree, including only relevant files
   withr::with_dir("..", {
-    fs::dir_tree(path = proj, regexp = include_exts)
+    fs::dir_tree(path = proj, regexp = "^(?!snapviewer/tools/).+\\..+$",
+                 perl = TRUE)
   })
 
   cat_glue(
     "```
 
-    Below, in fenced code blocks, are the contents of all the 1st-party files.
+    Below, in fenced code blocks, are the contents of all the 1st-party code and markdown files.
     Code in the `vendor` folder, from 3rd-party vendors, is not shown, but the `vendor/README.md` file describes the origin and purpose of this code.
     "
   )
 }) |> paste(collapse = "\n")
 
 # all 1st-party code files, with top-level files first
-files <- fs::dir_ls(regexp = include_exts, recurse = TRUE)
+files <- fs::dir_ls(regexp = "\\.(html|css|js|md)$", recurse = TRUE)
 files <- files[!grepl("^vendor/.*/", files)]
 files <- files[order(grepl("/", files, fixed = TRUE))]
 
@@ -98,7 +96,9 @@ all[-length(all)] <- paste0(
   all[-length(all)],
   "\n\nDon't do anything yet -- I'm still copying over more code."
 )
-nchar(all)
+
+cat_glue("There will be {length(all)} files with the following lengths:
+         {paste(nchar(all), collapse = ', ')}")
 
 withr::with_dir(this.path::this.dir(), {
   old_files <- list.files(pattern = "^codebase_\\d+\\.txt$")
