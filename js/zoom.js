@@ -20,9 +20,9 @@ export function updateZoomButtons() {
     $(id).classList.toggle('active', id === state.currentZoom));
 }
 
-// Apply current zoom class to current preview image/object element.
+// Apply current zoom class to current preview image element.
 function applyZoom() {
-  const el = dom.contentBody.querySelector('#img-output img, #img-output object');
+  const el = dom.contentBody.querySelector('#img-output img');
   if (!el) return;
   el.classList.remove('zoom-fit-width','zoom-fit-height','zoom-full');
   el.classList.add(state.currentZoom);
