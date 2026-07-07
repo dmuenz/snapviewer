@@ -52,7 +52,7 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
       <p>Click below to reopen <strong>${escHtml(display)}</strong> snapshots,
          or use the folder menu in the title bar to switch folders.</p>
       <button id="open-btn">Open ${escHtml(display)} snapshots</button>
-      <p style="margin-top:10px">
+      <p class="margin-t-10px">
         <a id="pick-new" href="#">Open a different snapshot folder…</a>
       </p>
       <div id="snaps-help-target" class="tooltip-target">
