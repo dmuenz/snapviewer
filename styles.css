@@ -655,6 +655,11 @@ html, body {
 }
 #resizer:hover, #resizer.dragging { background: var(--accent); }
 
+body.is-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
 /* ── Tree nodes ───────────────────────────────────────────────── */
 .tree-node { width: 100%; }
 
