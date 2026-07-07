@@ -52,7 +52,7 @@ async function buildTreeFromHandle(dirHandle, container, depth, gen, pathPrefix,
 
     const row = document.createElement('div');
     row.className = 'tree-row';
-    row.style.paddingLeft = (depth * 16 + 10) + 'px';
+    row.dataset.depth = depth;
 
     const entryPath = pathPrefix ? `${pathPrefix}/${entry.name}` : entry.name;
     row.dataset.path = entryPath;
@@ -74,22 +74,28 @@ async function buildTreeFromHandle(dirHandle, container, depth, gen, pathPrefix,
 
     if (entry.kind === 'directory') {
       icon.innerHTML = '📁';
-      icon.style.color = 'var(--folder)';
+      icon.classList.add('row-icon-folder');
 
       if (state.filterText) {
         if (!(await folderHasMatchHandle(entry))) continue;
         if (!entry.name.toLowerCase().includes(state.filterText)) row.classList.add('dim-folder');
       }
 
-      const children = document.createElement('div');
+      // Outer wrapper uses grid animation for expand/collapse
+      const childrenOuter = document.createElement('div');
       const shouldBeOpen = openPaths && openPaths.has(entryPath);
-      children.className = 'tree-children' + (shouldBeOpen ? '' : ' collapsed');
-      children.style.maxHeight = shouldBeOpen ? 'none' : '0px';
+      childrenOuter.className = 'tree-children' + (shouldBeOpen ? '' : ' collapsed');
+
+      // Inner wrapper required for grid row animation
+      const childrenInner = document.createElement('div');
+      childrenInner.className = 'tree-children-inner';
+      childrenOuter.appendChild(childrenInner);
+
       let loaded = false;
 
       if (shouldBeOpen) {
         arrow.classList.add('open');
-        await buildTreeFromHandle(entry, children, depth + 1, gen, entryPath, openPaths);
+        await buildTreeFromHandle(entry, childrenInner, depth + 1, gen, entryPath, openPaths);
         loaded = true;
         if (gen !== state.treeGeneration) return;
       }
@@ -97,19 +103,19 @@ async function buildTreeFromHandle(dirHandle, container, depth, gen, pathPrefix,
       row.addEventListener('click', async () => {
         const isOpen = arrow.classList.contains('open');
         if (!loaded) {
-          await buildTreeFromHandle(entry, children, depth + 1, gen, entryPath, openPaths);
+          await buildTreeFromHandle(entry, childrenInner, depth + 1, gen, entryPath, openPaths);
           loaded = true;
         }
-        toggleChildren(arrow, children, isOpen, entryPath);
+        toggleChildren(arrow, childrenOuter, isOpen, entryPath);
       });
 
       node.appendChild(row);
-      node.appendChild(children);
+      node.appendChild(childrenOuter);
     } else {
       arrow.classList.add('leaf');
       const fi = fileIcon(entry.name, EXT_MD, EXT_IMG);
       icon.innerHTML = fi.icon;
-      icon.style.color = fi.color;
+      icon.classList.add(fi.colorClass);
 
       if (state.filterText && !entry.name.toLowerCase().includes(state.filterText)) continue;
 
@@ -150,7 +156,7 @@ async function buildTreeFromVirtual(vDir, container, depth, gen, pathPrefix, ope
 
     const row = document.createElement('div');
     row.className = 'tree-row';
-    row.style.paddingLeft = (depth * 16 + 10) + 'px';
+    row.dataset.depth = depth;
 
     const entryPath = pathPrefix ? `${pathPrefix}/${entry.name}` : entry.name;
     row.dataset.path = entryPath;
@@ -172,22 +178,28 @@ async function buildTreeFromVirtual(vDir, container, depth, gen, pathPrefix, ope
 
     if (entry.kind === 'directory') {
       icon.innerHTML = '📁';
-      icon.style.color = 'var(--folder)';
+      icon.classList.add('row-icon-folder');
 
       if (state.filterText) {
         if (!folderHasMatchVirtual(entry)) continue;
         if (!entry.name.toLowerCase().includes(state.filterText)) row.classList.add('dim-folder');
       }
 
-      const childrenEl = document.createElement('div');
+      // Outer wrapper uses grid animation for expand/collapse
+      const childrenOuter = document.createElement('div');
       const shouldBeOpen = openPaths && openPaths.has(entryPath);
-      childrenEl.className = 'tree-children' + (shouldBeOpen ? '' : ' collapsed');
-      childrenEl.style.maxHeight = shouldBeOpen ? 'none' : '0px';
+      childrenOuter.className = 'tree-children' + (shouldBeOpen ? '' : ' collapsed');
+
+      // Inner wrapper required for grid row animation
+      const childrenInner = document.createElement('div');
+      childrenInner.className = 'tree-children-inner';
+      childrenOuter.appendChild(childrenInner);
+
       let loaded = false;
 
       if (shouldBeOpen) {
         arrow.classList.add('open');
-        await buildTreeFromVirtual(entry, childrenEl, depth + 1, gen, entryPath, openPaths);
+        await buildTreeFromVirtual(entry, childrenInner, depth + 1, gen, entryPath, openPaths);
         loaded = true;
         if (gen !== state.treeGeneration) return;
       }
@@ -195,19 +207,19 @@ async function buildTreeFromVirtual(vDir, container, depth, gen, pathPrefix, ope
       row.addEventListener('click', async () => {
         const isOpen = arrow.classList.contains('open');
         if (!loaded) {
-          await buildTreeFromVirtual(entry, childrenEl, depth + 1, gen, entryPath, openPaths);
+          await buildTreeFromVirtual(entry, childrenInner, depth + 1, gen, entryPath, openPaths);
           loaded = true;
         }
-        toggleChildren(arrow, childrenEl, isOpen, entryPath);
+        toggleChildren(arrow, childrenOuter, isOpen, entryPath);
       });
 
       node.appendChild(row);
-      node.appendChild(childrenEl);
+      node.appendChild(childrenOuter);
     } else {
       arrow.classList.add('leaf');
       const fi = fileIcon(entry.name, EXT_MD, EXT_IMG);
       icon.innerHTML = fi.icon;
-      icon.style.color = fi.color;
+      icon.classList.add(fi.colorClass);
 
       if (state.filterText && !entry.name.toLowerCase().includes(state.filterText)) continue;
 
@@ -230,24 +242,16 @@ async function buildTreeFromVirtual(vDir, container, depth, gen, pathPrefix, ope
   }
 }
 
-// Toggle folder open/close with animation and persisted state.
-function toggleChildren(arrow, children, isOpen, entryPath) {
+// Toggle folder open/close with CSS grid animation and persisted state.
+function toggleChildren(arrow, childrenOuter, isOpen, entryPath) {
   if (isOpen) {
     state.openPaths.delete(entryPath);
     arrow.classList.remove('open');
-    children.style.maxHeight = children.scrollHeight + 'px';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      children.classList.add('collapsed');
-      children.style.maxHeight = '0px';
-    }));
+    childrenOuter.classList.add('collapsed');
   } else {
     state.openPaths.add(entryPath);
-    children.classList.remove('collapsed');
-    children.style.maxHeight = children.scrollHeight + 'px';
+    childrenOuter.classList.remove('collapsed');
     arrow.classList.add('open');
-    children.addEventListener('transitionend', () => {
-      if (arrow.classList.contains('open')) children.style.maxHeight = 'none';
-    }, { once: true });
   }
 }
 

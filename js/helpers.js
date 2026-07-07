@@ -16,12 +16,12 @@ export function extOf(name) {
   return i >= 0 ? name.slice(i + 1).toLowerCase() : '';
 }
 
-// Return icon and color metadata for a filename.
+// Return icon and color class metadata for a filename.
 export function fileIcon(name, EXT_MD, EXT_IMG) {
   const e = extOf(name);
-  if (EXT_MD.has(e))  return { icon: '📄', color: 'var(--file-md)' };
-  if (EXT_IMG.has(e)) return { icon: '🖼️', color: 'var(--file-img)' };
-  return { icon: '📄', color: 'var(--text-dim)' };
+  if (EXT_MD.has(e))  return { icon: '📄', colorClass: 'row-icon-md' };
+  if (EXT_IMG.has(e)) return { icon: '🖼️', colorClass: 'row-icon-img' };
+  return { icon: '📋', colorClass: 'row-icon-other' };
 }
 
 // Escape HTML-special characters for safe inline rendering.

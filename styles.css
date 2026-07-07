@@ -697,6 +697,21 @@ body.is-resizing {
 .tree-row.dim-folder .row-name { color: var(--text-dim); }
 .tree-row.dim-folder .row-icon { opacity: 0.45; }
 
+/* Indentation for nested files/folders */
+.tree-row[data-depth="0"]  { padding-left: 10px; }
+.tree-row[data-depth="1"]  { padding-left: 26px; }
+.tree-row[data-depth="2"]  { padding-left: 42px; }
+.tree-row[data-depth="3"]  { padding-left: 58px; }
+.tree-row[data-depth="4"]  { padding-left: 74px; }
+.tree-row[data-depth="5"]  { padding-left: 90px; }
+.tree-row[data-depth="6"]  { padding-left: 106px; }
+.tree-row[data-depth="7"]  { padding-left: 122px; }
+.tree-row[data-depth="8"]  { padding-left: 138px; }
+.tree-row[data-depth="9"]  { padding-left: 154px; }
+.tree-row[data-depth="10"] { padding-left: 170px; }
+.tree-row[data-depth="11"] { padding-left: 186px; }
+.tree-row[data-depth="12"] { padding-left: 202px; }
+
 /* Keyboard-focused tree row */
 .tree-row.kb-focus {
   outline: 1px solid var(--accent);
@@ -719,8 +734,27 @@ body.is-resizing {
 .row-icon { flex-shrink: 0; font-size: 0.95rem; }
 .row-name { font-size: 0.84rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; }
 
-.tree-children { overflow: hidden; transition: max-height 0.22s ease; }
-.tree-children.collapsed { max-height: 0 !important; }
+/* Tree children grid animation */
+.tree-children {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.22s ease;
+  overflow: hidden;
+}
+
+.tree-children.collapsed {
+  grid-template-rows: 0fr;
+}
+
+.tree-children-inner {
+  overflow: hidden;
+}
+
+/* Icon color classes */
+.row-icon-folder { color: var(--folder); }
+.row-icon-md     { color: var(--file-md); }
+.row-icon-img    { color: var(--file-img); }
+.row-icon-other  { color: var(--text-dim); }
 
 /* Keyboard hint chip at bottom of tree panel */
 .kbd-hint-chip {
