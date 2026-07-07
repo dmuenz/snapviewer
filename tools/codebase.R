@@ -3,6 +3,8 @@
 # each of at most 50,000 characters.
 # -Daniel Muenz
 
+this_dir <- this.path::this.dir()
+
 # move to project root
 setwd(this.path::this.proj())
 proj <- basename(getwd())
@@ -100,7 +102,7 @@ all[-length(all)] <- paste0(
 cat_glue("There will be {length(all)} files with the following lengths:
          {paste(nchar(all), collapse = ', ')}")
 
-withr::with_dir(this.path::this.dir(), {
+withr::with_dir(this_dir, {
   old_files <- list.files(pattern = "^codebase_\\d+\\.txt$")
   file.remove(old_files)
 
