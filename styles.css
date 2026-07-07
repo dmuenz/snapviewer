@@ -37,6 +37,10 @@ html, body {
   overflow: hidden;
 }
 
+.hidden {
+  display: none;
+}
+
 /* ── Layout ───────────────────────────────────────────────────── */
 #app {
   display: grid;
@@ -379,6 +383,7 @@ html, body {
 
 /* About modal */
 .about-overlay {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: 700;
@@ -432,6 +437,19 @@ html, body {
   background: var(--hover);
   border-color: var(--border);
   color: var(--text-bright);
+}
+
+.about-app-name {
+  font-weight: 700;
+}
+
+.about-app-name-accent {
+  color: var(--accent);
+}
+
+.about-fallback-note {
+  color: var(--text-dim);
+  font-size: 0.95em;
 }
 
 .about-source {
@@ -918,6 +936,16 @@ body.is-resizing {
   margin:6px 0 0 16px;
 }
 .info-tooltip .tt-row ul + p {
+  margin-top: 6px;
+}
+
+#snaps-help-tooltip-path {
+  margin-top: 4px;
+  margin-left: 16px;
+  color: var(--text-bright);
+}
+
+#snaps-help-tooltip-detail {
   margin-top: 6px;
 }
 
