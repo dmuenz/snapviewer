@@ -1,14 +1,21 @@
-// CSS variables helper for moving tooltips without inline styles.
-// Assumes same-origin stylesheet defines:
-// :root { --tt-x: 0px; --tt-y: 0px; }
-// .info-tooltip { transform: translate(var(--tt-x), var(--tt-y)); }
+// Utilities to update CSS variables on :root via CSSOM.
 
-// Update tooltip position variables on :root using the CSSOM.
-export function setTooltipVars(x, y) {
+export function setRootVar(name, value) {
   const rr = findRootRule();
   if (!rr) return; // If :root rule not found, silently no-op
-  rr.style.setProperty('--tt-x', `${x}px`);
-  rr.style.setProperty('--tt-y', `${y}px`);
+  rr.style.setProperty(name, value);
+}
+
+export function getRootVar(name) {
+  const rr = findRootRule();
+  if (!rr) return '';
+  return rr.style.getPropertyValue(name) || '';
+}
+
+// Update tooltip position variables.
+export function setTooltipVars(x, y) {
+  setRootVar('--tt-x', `${x}px`);
+  setRootVar('--tt-y', `${y}px`);
 }
 
 let rootRule = null;
