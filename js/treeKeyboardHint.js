@@ -16,7 +16,7 @@ export function showKeyboardHint() {
 
   // Reset visual state.
   dom.kbdHintChip.classList.remove('is-hiding');
-  dom.kbdHintChip.style.display = 'flex';
+  dom.kbdHintChip.classList.add('visible');
 
   // Clear any previous timer.
   clearTimeout(autoHideTimer);
@@ -44,7 +44,7 @@ function hideWithFade() {
     // Only act on this element's opacity transition.
     if (e.target !== chip || e.propertyName !== 'opacity') return;
 
-    chip.style.display = 'none';
+    chip.classList.remove('visible');
     chip.classList.remove('is-hiding');
     chip.removeEventListener('transitionend', onEnd);
   };

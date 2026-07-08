@@ -27,11 +27,9 @@ export function initAboutModal() {
 function openAbout() {
   if (!dom.aboutOverlay) return;
   dom.aboutOverlay.classList.add('open');
-  dom.aboutOverlay.style.display = 'flex';
 }
 
 function closeAbout() {
   if (!dom.aboutOverlay) return;
   dom.aboutOverlay.classList.remove('open');
-  dom.aboutOverlay.style.display = 'none';
 }

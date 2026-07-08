@@ -25,6 +25,8 @@
   --content-pad-tb: 28px;
   --content-pad-lr: 36px;
   --monospace: 'Cascadia Code', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --tt-x: 0px;
+  --tt-y: 0px;
 }
 
 html, body {
@@ -34,6 +36,9 @@ html, body {
   color: var(--text);
   overflow: hidden;
 }
+
+.hidden { display: none; }
+.margin-t-10px { margin-top: 10px; }
 
 /* ── Layout ───────────────────────────────────────────────────── */
 #app {
@@ -147,6 +152,12 @@ html, body {
   color: var(--text-dim);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+}
+
+.dd-empty-message {
+  padding: 14px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
 }
 
 .dd-item {
@@ -375,8 +386,9 @@ html, body {
   color: var(--accent);
 }
 
-/* About modal */
+/* Overlay to darken background */
 .about-overlay {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: 700;
@@ -389,6 +401,7 @@ html, body {
   display: flex;
 }
 
+/* About modal */
 .about-modal {
   width: min(730px, 92vw);
   max-height: 82vh;
@@ -430,6 +443,19 @@ html, body {
   background: var(--hover);
   border-color: var(--border);
   color: var(--text-bright);
+}
+
+.about-app-name {
+  font-weight: 700;
+}
+
+.about-app-name-accent {
+  color: var(--accent);
+}
+
+#about-fallback-note {
+  color: var(--text-dim);
+  font-size: 0.95em;
 }
 
 .about-source {
@@ -653,6 +679,11 @@ html, body {
 }
 #resizer:hover, #resizer.dragging { background: var(--accent); }
 
+body.is-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
 /* ── Tree nodes ───────────────────────────────────────────────── */
 .tree-node { width: 100%; }
 
@@ -672,6 +703,21 @@ html, body {
 .tree-row.active .row-name { color: var(--text-bright); }
 .tree-row.dim-folder .row-name { color: var(--text-dim); }
 .tree-row.dim-folder .row-icon { opacity: 0.45; }
+
+/* Indentation for nested files/folders */
+.tree-row[data-depth="0"]  { padding-left: 10px; }
+.tree-row[data-depth="1"]  { padding-left: 26px; }
+.tree-row[data-depth="2"]  { padding-left: 42px; }
+.tree-row[data-depth="3"]  { padding-left: 58px; }
+.tree-row[data-depth="4"]  { padding-left: 74px; }
+.tree-row[data-depth="5"]  { padding-left: 90px; }
+.tree-row[data-depth="6"]  { padding-left: 106px; }
+.tree-row[data-depth="7"]  { padding-left: 122px; }
+.tree-row[data-depth="8"]  { padding-left: 138px; }
+.tree-row[data-depth="9"]  { padding-left: 154px; }
+.tree-row[data-depth="10"] { padding-left: 170px; }
+.tree-row[data-depth="11"] { padding-left: 186px; }
+.tree-row[data-depth="12"] { padding-left: 202px; }
 
 /* Keyboard-focused tree row */
 .tree-row.kb-focus {
@@ -695,13 +741,32 @@ html, body {
 .row-icon { flex-shrink: 0; font-size: 0.95rem; }
 .row-name { font-size: 0.84rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; }
 
-.tree-children { overflow: hidden; transition: max-height 0.22s ease; }
-.tree-children.collapsed { max-height: 0 !important; }
+/* Tree children grid animation */
+.tree-children {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.22s ease;
+  overflow: hidden;
+}
+
+.tree-children.collapsed {
+  grid-template-rows: 0fr;
+}
+
+.tree-children-inner {
+  overflow: hidden;
+}
+
+/* Icon color classes */
+.row-icon-folder { color: var(--folder); }
+.row-icon-md     { color: var(--file-md); }
+.row-icon-img    { color: var(--file-img); }
+.row-icon-other  { color: var(--text-dim); }
 
 /* Keyboard hint chip at bottom of tree panel */
 .kbd-hint-chip {
   flex-shrink: 0;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -718,6 +783,7 @@ html, body {
   transition: opacity 2000ms ease;
 }
 
+.kbd-hint-chip.visible { display: flex; }
 .kbd-hint-chip.is-hiding { opacity: 0; }
 
 .kbd-hint-text { min-width: 0; }
@@ -806,6 +872,9 @@ html, body {
   margin-left:10px;
   flex:1;
 }
+.file-date.visible {
+  display: block;
+}
 
 #content-body {
   flex: 1;
@@ -818,6 +887,13 @@ html, body {
   color: var(--danger);
   padding: 20px;
   font-size: 0.88rem;
+}
+
+.loading-placeholder {
+  color: var(--text-dim);
+  padding: 40px 0;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
 /* ── Welcome / splash ─────────────────────────────────────────── */
@@ -871,6 +947,9 @@ html, body {
 
 .info-tooltip {
   position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(var(--tt-x), var(--tt-y));
   z-index: 1001;
   pointer-events: none;
   display: none;
@@ -908,6 +987,16 @@ html, body {
   margin:6px 0 0 16px;
 }
 .info-tooltip .tt-row ul + p {
+  margin-top: 6px;
+}
+
+#snaps-help-tooltip-path {
+  margin-top: 4px;
+  margin-left: 16px;
+  color: var(--text-bright);
+}
+
+#snaps-help-tooltip-detail {
   margin-top: 6px;
 }
 

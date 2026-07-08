@@ -122,13 +122,19 @@ function parentRow(row) {
   const currentNode = row.closest('.tree-node');
   if (!currentNode) return null;
 
-  const parentChildren = currentNode.parentElement;
-  if (!parentChildren || !parentChildren.classList.contains('tree-children')) return null;
-
-  const parentNode = parentChildren.closest('.tree-node');
-  if (!parentNode) return null;
-
-  return parentNode.querySelector(':scope > .tree-row');
+  // Walk up from the tree-node to find the .tree-children container.
+  // With the grid animation structure, the parent chain is:
+  // .tree-node → .tree-children-inner → .tree-children → .tree-node (parent folder)
+  let ancestor = currentNode.parentElement;
+  while (ancestor && ancestor !== dom.treeRoot) {
+    if (ancestor.classList.contains('tree-children')) {
+      const parentNode = ancestor.closest('.tree-node');
+      if (!parentNode) return null;
+      return parentNode.querySelector(':scope > .tree-row');
+    }
+    ancestor = ancestor.parentElement;
+  }
+  return null;
 }
 
 // Ensure there is a starting focused row.

@@ -52,7 +52,7 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
       <p>Click below to reopen <strong>${escHtml(display)}</strong> snapshots,
          or use the folder menu in the title bar to switch folders.</p>
       <button id="open-btn">Open ${escHtml(display)} snapshots</button>
-      <p style="margin-top:10px">
+      <p class="margin-t-10px">
         <a id="pick-new" href="#">Open a different snapshot folder…</a>
       </p>
       <div id="snaps-help-target" class="tooltip-target">
@@ -79,9 +79,9 @@ export function showReadySplash() {
 
 // In content header, set breadcrumb text and hide everything else.
 function resetContentHeader(message) {
-  dom.breadcrumb.textContent  = message;
-  dom.dateBadge.style.display = 'none';
-  dom.dateBadge.textContent   = '';
+  dom.breadcrumb.textContent = message;
+  dom.dateBadge.classList.remove('visible');
+  dom.dateBadge.textContent = '';
   dom.imgToolbar.classList.remove('visible');
   dom.mdToolbar.classList.remove('visible');
 }

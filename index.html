@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+        content="default-src 'self'; script-src 'self'; style-src 'self';
                  img-src 'self' blob:; font-src 'self'; connect-src 'none';
                  object-src 'none'; base-uri 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -59,7 +59,7 @@
     <div id="tree-scroll">
       <div id="tree-root"></div>
     </div>
-    <div id="kbd-hint-chip" class="kbd-hint-chip" style="display:none;">
+    <div id="kbd-hint-chip" class="kbd-hint-chip">
       <span class="kbd-hint-text">
         <strong>Keyboard navigation:</strong><br>
         <i class="bi bi-caret-up-square-fill"></i> <i class="bi bi-caret-down-square-fill"></i> navigate files & folders<br>
@@ -117,10 +117,10 @@
 </div>
 
 <!-- ── About modal ---──────────────────────────────────────────────── -->
-<div id="about-overlay" class="about-overlay" style="display:none;">
+<div id="about-overlay" class="about-overlay">
   <div id="about-modal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
     <div class="about-header">
-      <h3 id="about-title">About <span style="font-weight: 700;"><span style="color:var(--accent);">Snap</span>Viewer</span></h3>
+      <h3 id="about-title">About <span class="about-app-name"><span class="about-app-name-accent">Snap</span>Viewer</span></h3>
       <button id="about-close" class="about-close" aria-label="Close About dialog">✕</button>
     </div>
     <div class="about-source">
@@ -139,7 +139,7 @@
         <li>View markdown and image snapshots</li>
         <li>Open folders for multiple packages and remember them across browsing sessions*</li>
       </ul>
-      <p style="color:var(--text-dim);font-size:0.95em;">
+      <p id="about-fallback-note">
         * In browsers without File System Access support, SnapViewer uses a fallback mode with limited persistence.
       </p>
       <h4>Finding the snapshot folder</h4>
@@ -184,10 +184,10 @@
     It's a folder named <code>_snaps</code> created by testthat.<br>
     It contains snapshot files – markdown and images.<br>
     In an R package, the path is:
-    <div style="margin-top:4px; margin-left: 16px; color:var(--text-bright);">
+    <div id="snaps-help-tooltip-path">
       <code>tests/testthat/_snaps</code>
     </div>
-    <div style="margin-top:6px;">
+    <div id="snaps-help-tooltip-detail">
       <p>You can select any of the following:</p>
       <ul>
         <li>the package root folder (best option),</li>
@@ -225,7 +225,7 @@
 </div>
 
 <!-- ── Fallback directory picker ─────────────────────────────────── -->
-<input id="folder-input-fallback" type="file" webkitdirectory multiple style="display:none" />
+<input id="folder-input-fallback" type="file" webkitdirectory multiple class="hidden" />
 
 <!-- ── JavaScript libraries ──────────────────────────────────────── -->
 <script type="module" src="js/main.js"></script>
