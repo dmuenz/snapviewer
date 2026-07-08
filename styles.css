@@ -386,7 +386,7 @@ html, body {
   color: var(--accent);
 }
 
-/* About modal */
+/* Overlay to darken background */
 .about-overlay {
   display: none;
   position: fixed;
@@ -401,6 +401,7 @@ html, body {
   display: flex;
 }
 
+/* About modal */
 .about-modal {
   width: min(730px, 92vw);
   max-height: 82vh;
@@ -452,7 +453,7 @@ html, body {
   color: var(--accent);
 }
 
-.about-fallback-note {
+#about-fallback-note {
   color: var(--text-dim);
   font-size: 0.95em;
 }
