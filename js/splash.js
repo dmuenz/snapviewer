@@ -79,9 +79,9 @@ export function showReadySplash() {
 
 // In content header, set breadcrumb text and hide everything else.
 function resetContentHeader(message) {
-  dom.breadcrumb.textContent  = message;
-  dom.dateBadge.style.display = 'none';
-  dom.dateBadge.textContent   = '';
+  dom.breadcrumb.textContent = message;
+  dom.dateBadge.classList.remove('visible');
+  dom.dateBadge.textContent = '';
   dom.imgToolbar.classList.remove('visible');
   dom.mdToolbar.classList.remove('visible');
 }

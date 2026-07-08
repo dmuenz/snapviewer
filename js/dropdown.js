@@ -18,7 +18,7 @@ export function renderDropdown(records, activeId, actions = {}) {
 
   if (records.length === 0) {
     const empty = document.createElement('div');
-    empty.style.cssText = 'padding:14px;font-size:0.82rem;color:var(--text-dim)';
+    empty.className = 'dd-empty-message';
     empty.textContent = 'No folders in history yet.';
     dom.pathDropdown.appendChild(empty);
   } else {

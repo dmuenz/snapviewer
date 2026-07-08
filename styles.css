@@ -154,6 +154,12 @@ html, body {
   flex-shrink: 0;
 }
 
+.dd-empty-message {
+  padding: 14px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
 .dd-item {
   display: flex;
   align-items: center;
@@ -759,7 +765,7 @@ body.is-resizing {
 /* Keyboard hint chip at bottom of tree panel */
 .kbd-hint-chip {
   flex-shrink: 0;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -776,6 +782,7 @@ body.is-resizing {
   transition: opacity 2000ms ease;
 }
 
+.kbd-hint-chip.visible { display: flex; }
 .kbd-hint-chip.is-hiding { opacity: 0; }
 
 .kbd-hint-text { min-width: 0; }
@@ -864,6 +871,9 @@ body.is-resizing {
   margin-left:10px;
   flex:1;
 }
+.file-date.visible {
+  display: block;
+}
 
 #content-body {
   flex: 1;
@@ -876,6 +886,13 @@ body.is-resizing {
   color: var(--danger);
   padding: 20px;
   font-size: 0.88rem;
+}
+
+.loading-placeholder {
+  color: var(--text-dim);
+  padding: 40px 0;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
 /* ── Welcome / splash ─────────────────────────────────────────── */

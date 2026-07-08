@@ -36,8 +36,8 @@ export async function previewFile(fileRef) {
   bindSvgRenderers(null, null);
 
   // Reset date badge until file metadata is loaded.
-  dom.dateBadge.style.display = 'none';
-  dom.dateBadge.textContent   = '';
+  dom.dateBadge.classList.remove('visible');
+  dom.dateBadge.textContent = '';
 
   // Revoke previous object URL if present.
   if (state.currentMedia?.objectUrl) {
@@ -45,7 +45,7 @@ export async function previewFile(fileRef) {
     state.currentMedia = null;
   }
 
-  dom.contentBody.innerHTML = '<div style="color:var(--text-dim);padding:40px 0;text-align:center;font-size:0.85rem">Loading…</div>';
+  dom.contentBody.innerHTML = '<div class="loading-placeholder">Loading…</div>';
 
   const ext = extOf(fileRef?.name || '');
 
@@ -53,8 +53,8 @@ export async function previewFile(fileRef) {
     const file = await resolveFile(fileRef);
 
     // Show modification date in header badge.
-    dom.dateBadge.textContent   = 'Modified ' + formatDate(file.lastModified);
-    dom.dateBadge.style.display = 'block';
+    dom.dateBadge.textContent = 'Modified ' + formatDate(file.lastModified);
+    dom.dateBadge.classList.add('visible');
 
     // Markdown/text file preview.
     if (EXT_MD.has(ext)) {

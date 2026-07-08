@@ -58,7 +58,5 @@ function positionTooltip(e) {
   if (x + tw > window.innerWidth  - 8) x = e.clientX - tw - pad;
   if (y + th > window.innerHeight - 8) y = e.clientY - th - pad;
 
-  // dom.tooltip.style.left = x + 'px';
-  // dom.tooltip.style.top  = y + 'px';
   setTooltipVars(x, y);
 }
