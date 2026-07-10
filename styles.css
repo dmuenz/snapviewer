@@ -64,17 +64,17 @@ html, body {
 }
 
 #header .logo, #about-title .logo {
+	display: flex;
+  gap: 8px;
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--accent);
   letter-spacing: 0.04em;
   flex-shrink: 0;
+  align-items: center;
 }
-#header .logo span, #about-title .logo span { color: var(--text-bright); }
-#header .logo #logo-subhead {
-  font-size: 0.9rem;
-  color: var(--text-dim);
-}
+#logo-snap { color: var(--accent); }
+#logo-viewer { color: var(--text-bright); }
+#logo-subhead { font-size: 0.9rem; color: var(--text-dim); }
 
 /* ── Path dropdown ────────────────────────────────────────────── */
 #path-dropdown-wrap {
