@@ -10,6 +10,7 @@ export const dom = {
   sortAlphaBtn: $('btn-sort-alpha'),
   sortRecentBtn: $('btn-sort-recent'),
   collapseAllBtn: $('btn-collapse-all'),
+  expandAllBtn: $('btn-expand-all'),
   filterInput: $('filter-input'),
   filterClearBtn: $('filter-clear-btn'),
   contentBody: $('content-body'),

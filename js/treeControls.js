@@ -26,7 +26,12 @@ export function initTreeControls() {
   dom.collapseAllBtn.addEventListener('click', () => {
     collapseAllFolders();
   });
- 
+
+  // Expand all folders in the tree.
+  dom.expandAllBtn.addEventListener('click', () => {
+    expandAllFolders();
+  });
+
   // Live filter as user types.
   dom.filterInput.addEventListener('input', () => {
     state.filterText = dom.filterInput.value.trim().toLowerCase();
@@ -71,6 +76,45 @@ function syncSortButtons() {
 function collapseAllFolders() {
   state.openPaths = new Set();
   rebuildTree();
+}
+
+// Expand all folders: collect every directory path, then rebuild.
+async function expandAllFolders() {
+  const allPaths = new Set();
+
+  if (state.sourceMode === 'fs-handle') {
+    if (!state.rootHandle) return;
+    await collectFolderPathsFromHandle(state.rootHandle, '', allPaths);
+  } else {
+    const root = state.fallback.rootNode;
+    if (!root) return;
+    collectFolderPathsFromVirtual(root, '', allPaths);
+  }
+
+  state.openPaths = allPaths;
+  rebuildTree();
+}
+
+// Recursively walk FS Access directory handles and collect all folder paths.
+async function collectFolderPathsFromHandle(dirHandle, pathPrefix, paths) {
+  for await (const entry of dirHandle.values()) {
+    if (entry.kind === 'directory') {
+      const entryPath = pathPrefix ? `${pathPrefix}/${entry.name}` : entry.name;
+      paths.add(entryPath);
+      await collectFolderPathsFromHandle(entry, entryPath, paths);
+    }
+  }
+}
+
+// Recursively walk virtual fallback tree and collect all folder paths.
+function collectFolderPathsFromVirtual(vDir, pathPrefix, paths) {
+  for (const entry of (vDir.children || [])) {
+    if (entry.kind === 'directory') {
+      const entryPath = pathPrefix ? `${pathPrefix}/${entry.name}` : entry.name;
+      paths.add(entryPath);
+      collectFolderPathsFromVirtual(entry, entryPath, paths);
+    }
+  }
 }
 
 // Reset filter state/input and rebuild tree.
