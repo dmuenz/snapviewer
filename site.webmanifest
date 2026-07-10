@@ -1,6 +1,5 @@
 {
-  "name": "SnapViewer for testthat snapshots",
-  "short_name": "SnapViewer",
+  "name": "SnapViewer",
   "icons": [
      {
         "src": "favicon/android-chrome-192x192.png",
