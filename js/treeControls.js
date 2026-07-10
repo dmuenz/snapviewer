@@ -5,7 +5,7 @@ import { dom } from './dom.js';
 import { rebuildTree } from './tree.js';
 
 // Wire control event handlers for sort and filter UI.
-export function initControls() {
+export function initTreeControls() {
   // Sort: A–Z
   dom.sortAlphaBtn.addEventListener('click', () => {
     if (state.sortMode === 'alpha') return;

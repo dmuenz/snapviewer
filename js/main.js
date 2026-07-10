@@ -7,7 +7,7 @@ import { dbGetAll } from './db.js';
 import { initPathDropdownEvents, openSnaps, activateRecord } from './core.js';
 import { renderDropdown } from './dropdown.js';
 import { showSplash, showReturnSplash, showReadySplash } from './splash.js';
-import { initControls } from './controls.js';
+import { initTreeControls } from './treeControls.js';
 import { initAboutModal } from './about.js';
 import { initResizer } from './resizer.js';
 import { initMdMode } from './mdMode.js';
@@ -41,7 +41,7 @@ initPathDropdownEvents(async () => {
 });
 
 // Initialize non-core UI handlers.
-initControls();
+initTreeControls();
 initAboutModal();
 initResizer();
 initMdMode();
