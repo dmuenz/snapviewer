@@ -8,9 +8,8 @@
                  object-src 'none'; base-uri 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SnapViewer</title>
+  <link rel="icon" type="image/svg+xml" sizes="any" href="favicon/logo.svg">
   <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="vendor/prismjs/prism-tomorrow.min.css">
@@ -23,7 +22,13 @@
 
   <!-- ── Header ──────────────────────────────────────────────────── -->
   <header id="header">
-    <div class="logo">📷 Snap<span>Viewer</span> <span id="logo-subhead">for testthat snapshots</span></div>
+    <div class="logo">
+      <img src="favicon/logo.svg" alt="Logo" width="36px" height="36px">
+      <span>
+        <span id="logo-snap">Snap</span><span id="logo-viewer">Viewer</span>
+        <span id="logo-subhead">for testthat snapshots</span>
+      </span>
+    </div>
     <div id="path-dropdown-wrap">
       <button id="path-btn" title="Switch or open a snapshot folder">
         <span id="path-text" class="path-text">No folder open</span>
@@ -119,13 +124,16 @@
 <!-- ── About modal ---──────────────────────────────────────────────── -->
 <div id="about-overlay" class="about-overlay">
   <div id="about-modal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <img src="favicon/logo.svg" alt="Logo" align="left" width="48px" height="48px" id="about-logo">
     <div class="about-header">
       <h3 id="about-title">About <span class="about-app-name"><span class="about-app-name-accent">Snap</span>Viewer</span></h3>
       <button id="about-close" class="about-close" aria-label="Close About dialog">✕</button>
     </div>
     <div class="about-source">
-      <span class="about-author">Vide-coded by Daniel Muenz</span>
-      &nbsp;<a href="https://github.com/dmuenz/snapviewer/" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i></a>
+      <span class="about-author">Vide-coded by Daniel Muenz</span>&nbsp;
+      <a href="https://github.com/dmuenz/snapviewer/" target="_blank" rel="noopener noreferrer" title="View source code on GitHub">
+        <i class="bi bi-github"></i>
+      </a>
     </div>
 
     <div class="about-body">
