@@ -414,6 +414,10 @@ html, body {
   padding: 16px 18px 14px;
 }
 
+#about-logo {
+  margin-right: 8px;
+}
+
 .about-header {
   display: flex;
   align-items: center;
