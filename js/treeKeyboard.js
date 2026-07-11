@@ -24,7 +24,7 @@ function getVisibleRows() {
 }
 
 // Ensure a row is visibly marked and receives DOM focus.
-function focusRow(row, scroll = true) {
+export function focusRow(row, scroll = true) {
   if (!row) return;
 
   if (focusedRow) focusedRow.classList.remove('kb-focus');
