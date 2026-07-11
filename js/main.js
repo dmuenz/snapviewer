@@ -17,6 +17,13 @@ import { initTooltipTracking } from './tooltip.js';
 import { initTreeKeyboard } from './treeKeyboard.js';
 import { initKeyboardHint, showKeyboardHint } from './treeKeyboardHint.js';
 
+// DEV-ONLY: force fallback mode via ?fallback query param, e.g.:
+// http://localhost:3500/?fallback
+// https://dmuenz.github.io/snapviewer/?fallback
+if (new URLSearchParams(window.location.search).has('fallback')) {
+  delete window.showDirectoryPicker;
+}
+
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
   onOpenSnaps: () => openSnaps(withRenderDropdown, showReadySplash),
