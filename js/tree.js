@@ -30,7 +30,13 @@ export async function rebuildTree() {
     if (newRow) {
       newRow.classList.add('active');
       state.activeRow = newRow;
-      focusRow(newRow, false); // restore keyboard focus without scrolling
+
+      // Restore keyboard focus (without scrolling) if the user isn't typing in an input/textarea.
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const isTyping = tag === 'input' || tag === 'textarea' || document.activeElement?.isContentEditable;
+      if (!isTyping) {
+        focusRow(newRow, false);
+      }
     } else {
       state.activeRow = null;
     }
