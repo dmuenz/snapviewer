@@ -179,8 +179,7 @@ hex_logo <- function() {
     )
 }
 
-p <- hex_logo()
-p
+(p <- hex_logo())
 
-ggsave("logo.svg", p, width = 2.73, height = 3, bg = "transparent")
+ggsave("logo.svg", p, width = 3, height = 3, bg = "transparent")
 
