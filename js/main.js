@@ -7,7 +7,7 @@ import { dbGetAll } from './db.js';
 import { initPathDropdownEvents, openSnaps, activateRecord } from './core.js';
 import { renderDropdown } from './dropdown.js';
 import { showSplash, showReturnSplash, showReadySplash } from './splash.js';
-import { initControls } from './controls.js';
+import { initTreeControls } from './treeControls.js';
 import { initAboutModal } from './about.js';
 import { initResizer } from './resizer.js';
 import { initMdMode } from './mdMode.js';
@@ -16,6 +16,13 @@ import { initZoom } from './zoom.js';
 import { initTooltipTracking } from './tooltip.js';
 import { initTreeKeyboard } from './treeKeyboard.js';
 import { initKeyboardHint, showKeyboardHint } from './treeKeyboardHint.js';
+
+// DEV-ONLY: force fallback mode via ?fallback query param, e.g.:
+// http://localhost:3500/?fallback
+// https://dmuenz.github.io/snapviewer/?fallback
+if (new URLSearchParams(window.location.search).has('fallback')) {
+  delete window.showDirectoryPicker;
+}
 
 // Shared dropdown action callbacks used everywhere dropdown is rendered.
 const dropdownActions = {
@@ -41,7 +48,7 @@ initPathDropdownEvents(async () => {
 });
 
 // Initialize non-core UI handlers.
-initControls();
+initTreeControls();
 initAboutModal();
 initResizer();
 initMdMode();

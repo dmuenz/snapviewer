@@ -3,6 +3,7 @@
 
 import { state, EXT_IMG, EXT_MD } from './state.js';
 import { dom } from './dom.js';
+import { focusRow } from './treeKeyboard.js';
 import { fileIcon } from './helpers.js';
 import { previewFile } from './preview.js';
 import { showTooltip, hideTooltip } from './tooltip.js';
@@ -10,6 +11,8 @@ import { showTooltip, hideTooltip } from './tooltip.js';
 // Rebuild tree from current source and current app state.
 export async function rebuildTree() {
   const gen = ++state.treeGeneration;
+  const previousPath = state.activeRow?.dataset?.path || null;
+
   dom.treeRoot.innerHTML = '';
 
   if (state.sourceMode === 'fs-handle') {
@@ -19,6 +22,24 @@ export async function rebuildTree() {
     const root = state.fallback.rootNode;
     if (!root) return;
     await buildTreeFromVirtual(root, dom.treeRoot, 0, gen, '', state.openPaths);
+  }
+
+  // Restore selection after rebuild.
+  if (previousPath) {
+    const newRow = dom.treeRoot.querySelector(`.tree-row[data-path="${CSS.escape(previousPath)}"]`);
+    if (newRow) {
+      newRow.classList.add('active');
+      state.activeRow = newRow;
+
+      // Restore keyboard focus (without scrolling) if the user isn't typing in an input/textarea.
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const isTyping = tag === 'input' || tag === 'textarea' || document.activeElement?.isContentEditable;
+      if (!isTyping) {
+        focusRow(newRow, false);
+      }
+    } else {
+      state.activeRow = null;
+    }
   }
 }
 
