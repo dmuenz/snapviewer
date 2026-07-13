@@ -2,11 +2,13 @@
 
 First the SVG file `logo.svg` was created with `logo.R`. Then the full set of favicons was created by uploading the SVG file to the following website: https://favicon.io/svg-favicon/.
 
-`favicon.ico` at 16x16:<br>
+`favicon.ico` and `favicon-16x16.png` at 16x16:<br>
 <img src="favicon.ico" height="16">
+<img src="favicon-16x16.png" height="16">
 
-`favicon.ico` at 32x32:<br>
+`favicon.ico` and `favicon-32x32.png` at 32x32:<br>
 <img src="favicon.ico" height="32">
+<img src="favicon-32x32.png" height="32">
 
 `apple-touch-icon.png` at 180x180:<br>
 <img src="apple-touch-icon.png" height="180">
