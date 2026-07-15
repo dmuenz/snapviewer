@@ -71,7 +71,7 @@ export function showReadySplash(nickname) {
 
   const title = nickname == null
     ? "Folder loaded"
-    : `${escHtml(nickname)} folder loaded`;
+    : `<span id="nickname-ready-splash">${escHtml(nickname)}</span> folder loaded`;
 
    dom.contentBody.innerHTML = `
     <div class="welcome">

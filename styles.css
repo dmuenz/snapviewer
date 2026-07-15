@@ -961,6 +961,10 @@ body.is-resizing {
 .welcome a { font-size: 0.8rem; color: var(--text-dim); text-decoration: underline; }
 .welcome a:hover { color: var(--text); }
 
+#nickname-ready-splash {
+  color: var(--accent);
+}
+
 /* ── Info tooltip ─────────────────────────────────────────────── */
 
 .tooltip-target {
