@@ -8,7 +8,7 @@ export const dom = {
   treeRoot: $('tree-root'),
   folderInputFallback: $('folder-input-fallback'),
   sortAlphaBtn: $('btn-sort-alpha'),
-  sortRecentBtn: $('btn-sort-recent'),
+  sortTimestampBtn: $('btn-sort-timestamp'),
   collapseAllBtn: $('btn-collapse-all'),
   expandAllBtn: $('btn-expand-all'),
   filterInput: $('filter-input'),

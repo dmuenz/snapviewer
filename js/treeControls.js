@@ -15,7 +15,7 @@ export function initTreeControls() {
   });
 
   // Sort: Recent
-  dom.sortRecentBtn.addEventListener('click', () => {
+  dom.sortTimestampBtn.addEventListener('click', () => {
     if (state.sortMode === 'time') return;
     state.sortMode = 'time';
     syncSortButtons();
@@ -68,8 +68,8 @@ function syncSortButtons() {
   dom.sortAlphaBtn.classList.toggle('active', alpha);
   dom.sortAlphaBtn.setAttribute('aria-pressed', alpha ? 'true' : 'false');
 
-  dom.sortRecentBtn.classList.toggle('active', !alpha);
-  dom.sortRecentBtn.setAttribute('aria-pressed', !alpha ? 'true' : 'false');
+  dom.sortTimestampBtn.classList.toggle('active', !alpha);
+  dom.sortTimestampBtn.setAttribute('aria-pressed', !alpha ? 'true' : 'false');
 }
 
 // Collapse all expanded folders and rebuild tree.

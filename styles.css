@@ -525,34 +525,6 @@ html, body {
   height: var(--content-header-h);
 }
 
-.tb-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 9px;
-  border-radius: 5px;
-  border: 1px solid var(--border-bright);
-  background: transparent;
-  color: var(--text);
-  font-size: 0.76rem;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s, color 0.15s;
-  user-select: none;
-  height: 100%;
-}
-.tb-btn:hover {
-  background: var(--accent);
-  color: var(--text-bright);
-}
-.tb-btn.active {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--text-bright);
-}
-.tb-btn .btn-icon { font-size: 0.85rem; }
-
 #filter-bar {
   flex-shrink: 0;
   display: flex;
@@ -618,8 +590,65 @@ html, body {
 #tree-scroll::-webkit-scrollbar { width: 5px; }
 #tree-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ── Toolbar segmented buttons ────────────────────────────────── */
+/* ── Toolbar buttons ──────────────────────────────────────────── */
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  height: 100%;
+}
+.tb-btn:hover {
+  background: var(--accent);
+  color: var(--text-bright);
+}
+.tb-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-bright);
+}
 
+.tb-btn-icon {
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-image: var(--icon);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: var(--icon);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  height: 16px;
+  width: 16px;
+}
+
+#icon-sort-alpha {
+  --icon: url("assets/icons/sort-alpha-a-z.svg");
+}
+
+#icon-sort-timestamp {
+  --icon: url("assets/icons/sort-timestamp-new-old.svg");
+  width: 28px;
+}
+
+#icon-collapse-all {
+  --icon: url("assets/icons/collapse-all.svg");
+}
+
+#icon-expand-all {
+  --icon: url("assets/icons/expand-all.svg");
+}
+
+/* ── Toolbar segmented buttons ────────────────────────────────── */
 .content-toolbar:not(.visible) {
   display: none; 
 }
