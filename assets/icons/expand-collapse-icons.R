@@ -84,7 +84,7 @@ rounded_step <- function(x, y, radius = 0.1, direction = "hv") {
 # Create icon plot
 icon_folder <- function(filename, symbol) {
 
-  box_size <- 10
+  box_size <- 12
   offset <- 1
 
   rescale <- function(df) {
@@ -111,7 +111,7 @@ icon_folder <- function(filename, symbol) {
     direction = outer_box_path$dir,
     radius = 1)
 
-  symbol_len <- 6
+  symbol_len <- 8
 
   p <- ggplot() +
 
@@ -124,7 +124,7 @@ icon_folder <- function(filename, symbol) {
       mapping = aes(x = x, y = y),
       fill = NA,
       color = "black",
-      linewidth = 2.5,
+      linewidth = 2,
       radius = 0.05
     ) +
 
@@ -133,7 +133,7 @@ icon_folder <- function(filename, symbol) {
       data = outer_box_path,
       mapping = aes(x = x, y = y),
       color = "black",
-      linewidth = 2.5
+      linewidth = 2
     ) +
 
     # Horizontal line, i.e., minus sign
