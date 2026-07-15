@@ -133,7 +133,13 @@ export async function loadRoot(handleOrNull, recOrFallback, renderDropdown, show
   }
 
   await rebuildTree();
-  showReadySplash();
+
+  // Compute the nickname to display in the splash
+  const nickname = state.sourceMode === 'fs-handle'
+    ? displayName(recOrFallback)
+    : (state.fallback.label || null);
+
+  showReadySplash(nickname);
 }
 
 // Request permission for a stored handle and activate it.
