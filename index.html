@@ -46,17 +46,17 @@
     <div id="sidebar-toolbar">
       <div class="segmented-tb-btns visible" role="group" aria-label="Sort files">
         <button class="seg-tb-btn active" id="btn-sort-alpha" aria-pressed="true" title="Sort alphabetically">
-          <span class="btn-icon"><i class="bi bi-arrows-vertical"></i></span> A–Z
+          <span id="icon-sort-alpha" class="tb-btn-icon"></span>
         </button>
-        <button class="seg-tb-btn" id="btn-sort-recent" aria-pressed="false" title="Sort by recent">
-          <span class="btn-icon"><i class="bi bi-arrows-vertical"></i></span> Recent
+        <button class="seg-tb-btn" id="btn-sort-timestamp" aria-pressed="false" title="Sort by timestamp">
+          <span id="icon-sort-timestamp" class="tb-btn-icon"></span>
         </button>
       </div>
-      <button class="tb-btn" id="btn-collapse-all" title="Collapse all folders">
-        <span class="btn-icon"><i class="bi bi-folder-minus"></i></span>
-      </button>
       <button class="tb-btn" id="btn-expand-all" title="Expand all folders">
-        <span class="btn-icon"><i class="bi bi-folder-plus"></i></span>
+        <span id="icon-expand-all" class="tb-btn-icon"></span>
+      </button>
+      <button class="tb-btn" id="btn-collapse-all" title="Collapse all folders">
+        <span id="icon-collapse-all" class="tb-btn-icon"></span>
       </button>
     </div>
     <div id="filter-bar">
