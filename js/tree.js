@@ -24,6 +24,17 @@ export async function rebuildTree() {
     await buildTreeFromVirtual(root, dom.treeRoot, 0, gen, '', state.openPaths);
   }
 
+  // If the tree is empty after building, show an informative message.
+  if (dom.treeRoot.children.length === 0) {
+    const msg = document.createElement('div');
+    msg.className = 'tree-empty-msg';
+    msg.innerHTML = state.filterText
+      ? "No files match the current filter."
+      : "No snapshot files found.";
+    dom.treeRoot.appendChild(msg);
+    return;
+  }
+
   // Restore selection after rebuild.
   if (previousPath) {
     const newRow = dom.treeRoot.querySelector(`.tree-row[data-path="${CSS.escape(previousPath)}"]`);
