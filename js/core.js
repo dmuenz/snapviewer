@@ -3,7 +3,7 @@
 import { state, SNAPS_DIR } from './state.js';
 import { dom, $ } from './dom.js';
 import { dbGetAll, dbPut, dbDelete, dbSetMeta, upsertHandle } from './db.js';
-import { escHtml, displayName } from './helpers.js';
+import { escHtml, displayName, isValidNickname } from './helpers.js';
 import { rebuildTree } from './tree.js';
 import { pickSnapsViaInput, setFallbackSource } from './fallbackPicker.js';
 
@@ -14,7 +14,7 @@ export function showError(msg) {
 
 // Show nickname modal and resolve with entered label.
 // Prevent duplicate nicknames (case-insensitive, trimmed).
-// If saved nickname is empty, auto-generate "_snaps (n)" with smallest unique n.
+// If saved nickname is empty, auto-generate "_snaps-n" with smallest unique n.
 // Cancel aborts add-folder flow via AbortError.
 export async function promptNickname(suggestedLabel) {
   const records = await dbGetAll();
@@ -29,8 +29,8 @@ export async function promptNickname(suggestedLabel) {
   const generateAutoNickname = () => {
     const base = '_snaps';
     let n = 1;
-    while (isDuplicate(`${base} (${n})`)) n += 1;
-    return `${base} (${n})`;
+    while (isDuplicate(`${base}-${n}`)) n += 1;
+    return `${base}-${n}`;
   };
 
   let errEl = $('modal-nickname-error');
@@ -67,8 +67,8 @@ export async function promptNickname(suggestedLabel) {
       reject(new DOMException('User cancelled nickname entry', 'AbortError'));
     };
 
-    const showDupError = () => {
-      errEl.textContent = 'That nickname already exists. Choose a different one.';
+    const showError = (errMsg) => {
+      errEl.textContent = errMsg;
       dom.modalInput.setAttribute('aria-invalid', 'true');
       dom.modalInput.focus();
       dom.modalInput.select();
@@ -81,10 +81,17 @@ export async function promptNickname(suggestedLabel) {
 
     const trySave = () => {
       const raw = dom.modalInput.value.trim();
+
+      // Validate characters (empty is OK — it triggers auto-nickname).
+      if (raw !== '' && !isValidNickname(raw)) {
+        showError('Only letters, numbers, dots, spaces, hyphens, and underscores are allowed.');
+        return;
+      }
+
       const value = raw === '' ? generateAutoNickname() : raw;
 
       if (isDuplicate(value)) {
-        showDupError();
+        showError('That nickname already exists. Choose a different one.');
         return;
       }
 
@@ -102,8 +109,10 @@ export async function promptNickname(suggestedLabel) {
     };
     const onInput = () => {
       const value = dom.modalInput.value.trim();
-      if (!value || !isDuplicate(value)) clearError();
-    };
+      if (value === '' || (isValidNickname(value) && !isDuplicate(value))) {
+        clearError();
+      }
+   };
 
     $('modal-save').addEventListener('click', onSave);
     $('modal-cancel').addEventListener('click', onCancel);
@@ -133,7 +142,13 @@ export async function loadRoot(handleOrNull, recOrFallback, renderDropdown, show
   }
 
   await rebuildTree();
-  showReadySplash();
+
+  // Compute the nickname to display in the splash
+  const nickname = state.sourceMode === 'fs-handle'
+    ? displayName(recOrFallback)
+    : (state.fallback.label || null);
+
+  showReadySplash(nickname);
 }
 
 // Request permission for a stored handle and activate it.

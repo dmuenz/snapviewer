@@ -43,3 +43,9 @@ export function formatBytes(bytes) {
 export function displayName(rec) {
   return (rec.label && rec.label.trim()) ? rec.label.trim() : rec.handle.name;
 }
+
+// Validate a nickname: only alphanumeric, spaces, dots, _, and - allowed.
+// Returns true if the string is valid (or empty — emptiness is handled separately).
+export function isValidNickname(str) {
+  return /^[\p{L}\p{N} ._-]*$/u.test(str);
+}

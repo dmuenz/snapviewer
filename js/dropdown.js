@@ -3,7 +3,7 @@
 import { dom } from './dom.js';
 import { state } from './state.js';
 import { dbGetAll, dbPut, dbDelete } from './db.js';
-import { formatDate, displayName } from './helpers.js';
+import { formatDate, displayName, isValidNickname } from './helpers.js';
 import { showReturnSplash } from './splash.js';
 
 // Render entire dropdown list for folder history and bottom action.
@@ -102,7 +102,7 @@ function makeDropdownItem(rec, activeId, actions) {
     const input = document.createElement('input');
     input.className = 'dd-label-input';
     input.value = rec.label || '';
-    input.placeholder = rec.handle.name;
+    input.placeholder = rec.label || rec.handle.name;
     input.maxLength = 48;
 
     // prevent row activation when interacting with rename input
@@ -130,16 +130,24 @@ function makeDropdownItem(rec, activeId, actions) {
     const commit = async () => {
       const candidate = input.value.trim();
     
+      // Empty submission = cancel (restore existing nickname).
+      if (candidate === '') {
+        cancel();
+        return;
+      }
+
+      // Validate allowed characters.
+      if (!isValidNickname(candidate)) {
+        showNicknameValidationError(input, 'Only letters, numbers, dots, spaces, hyphens, and underscores are allowed.');
+        return;
+      }
+
       // Pull latest records before validating.
       const all = await dbGetAll();
     
       // Enforce unique non-empty nickname (case-insensitive).
-      if (candidate && nicknameExists(candidate, all, rec.id)) {
-        input.classList.add('invalid');
-        input.setCustomValidity('That nickname already exists.');
-        input.reportValidity();
-        input.focus();
-        input.select();
+      if (nicknameExists(candidate, all, rec.id)) {
+        showNicknameValidationError(input, 'That nickname already exists.');
         return;
       }
     
@@ -169,8 +177,11 @@ function makeDropdownItem(rec, activeId, actions) {
       if (e.key === 'Escape') { e.preventDefault(); cancel(); }
     });
     input.addEventListener('input', () => {
-      input.classList.remove('invalid');
-      input.setCustomValidity('');
+      const val = input.value.trim();
+      if (val === '' || isValidNickname(val)) {
+        input.classList.remove('invalid');
+        input.setCustomValidity('');
+      }
     });
   });
 
@@ -237,4 +248,12 @@ function nicknameExists(candidate, records, excludeId = null) {
   const c = normalizeNickname(candidate);
   if (!c) return false;
   return records.some(r => r.id !== excludeId && normalizeNickname(r.label) === c);
+}
+
+function showNicknameValidationError(input, errMsg) {
+  input.classList.add('invalid');
+  input.setCustomValidity(errMsg);
+  input.reportValidity();
+  input.focus();
+  input.select();
 }

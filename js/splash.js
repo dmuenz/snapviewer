@@ -66,13 +66,17 @@ export function showReturnSplash(mostRecent, allRecords, onActivateMostRecent, o
 }
 
 // Post-load splash shown after folder is loaded.
-export function showReadySplash() {
+export function showReadySplash(nickname) {
   resetContentHeader('Select a file to preview');
 
-  dom.contentBody.innerHTML = `
+  const title = nickname == null
+    ? "Folder loaded"
+    : `<span id="nickname-ready-splash">${escHtml(nickname)}</span> folder loaded`;
+
+   dom.contentBody.innerHTML = `
     <div class="welcome">
       <div class="big-icon">📁</div>
-      <h2>Folder loaded</h2>
+      <h2>${title}</h2>
       <p>Select any file from the tree on the left to preview it here.</p>
     </div>`;
 }
