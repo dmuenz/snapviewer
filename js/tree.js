@@ -24,6 +24,9 @@ export async function rebuildTree() {
     await buildTreeFromVirtual(root, dom.treeRoot, 0, gen, '', state.openPaths);
   }
 
+  // If this build was superseded by a newer one, bail out.
+  if (gen !== state.treeGeneration) return;
+
   // If the tree is empty after building, show an informative message.
   if (dom.treeRoot.children.length === 0) {
     const msg = document.createElement('div');
